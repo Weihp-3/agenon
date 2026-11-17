@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Palette tokens
+   One definition, two themes. A class name never changes between light
+   and dark; only the variables behind it does.
+   ------------------------------------------------------------------ */
+
+@layer base {
+    :root {
+        color-scheme: light;
+
+        /* Ground and surfaces: three steps of tone, never a shadow. */
+        --surface: 246 248 252;
+        --surface-raised: 255 255 255;
+        --surface-sunken: 238 242 249;
+
+        /* Ink: one full-strength text colour, plus two receding steps. */
+        --ink: 15 23 42;
+        --ink-muted: 71 85 105;
+        --ink-subtle: 116 132 154;
+        --ink-inverse: 255 255 255;
+
+        /* Brand: the single accent. Blue ink on white paper. */
+        --brand: 37 99 235;
+        --brand-hover: 29 78 216;
+        --brand-soft: 239 246 255;
+        --brand-soft-ink: 29 78 216;
+        --brand-on: 255 255 255;
+
+        /* Status colours: reserved for state, never decoration. */
+        --status-ok: 22 128 74;
+        --status-ok-soft: 240 253 244;
+        --status-ok-ink: 22 101 52;
+
+        --status-warn: 180 83 9;
+        --status-warn-soft: 255 251 235;
+        --status-warn-ink: 146 64 14;
+
+        --status-danger: 190 42 42;
+        --status-danger-soft: 254 242 242;
+        --status-danger-ink: 153 27 27;
+
+        --status-info: 2 119 158;
+        --status-info-soft: 236 254 255;
+        --status-info-ink: 14 116 144;
+    }
+
+    .dark {
+        color-scheme: dark;
+
+        --surface: 8 14 26;
+        --surface-raised: 16 25 42;
+        --surface-sunken: 5 10 19;
+
+        --ink: 226 232 240;
+        --ink-muted: 148 163 184;
+        --ink-subtle: 113 128 148;
+        --ink-inverse: 8 14 26;
+
+        --brand: 96 165 250;
+        --brand-hover: 147 197 253;
+        --brand-soft: 22 38 68;
+        --brand-soft-ink: 147 197 253;
+        --brand-on: 6 12 24;
+
+        --status-ok: 74 222 128;
+        --status-ok-soft: 10 38 26;
+        --status-ok-ink: 134 239 172;
+
+        --status-warn: 251 191 36;
+        --status-warn-soft: 46 33 6;
+        --status-warn-ink: 252 211 77;
+
+        --status-danger: 248 113 113;
+        --status-danger-soft: 50 16 16;
+        --status-danger-ink: 252 165 165;
+
+        --status-info: 34 211 238;
+        --status-info-soft: 8 44 52;
+        --status-info-ink: 103 232 249;
+    }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-surface text-ink font-sans antialiased;
+    }
+
+    /* Focus: one visible ring everywhere, keyboard only. */
+    :focus-visible {
+        @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-surface;
+    }
+
+    .dark :focus-visible {
+        @apply ring-offset-surface-raised;
+    }
+
+    ::selection {
+        @apply bg-brand/20 text-ink;
+    }
+
+    /* Headings carry the voice: tight tracking, tighter leading. */
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-bold tracking-tight;
+    }
+
+    /* Numbers that line up in tables. */
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@layer components {
+    /* Flat panel: a tone step above the page, no resting shadow. */
+    .panel {
+        @apply bg-surface-raised border border-ink/10 rounded-xl;
+    }
+
+    .panel-quiet {
+        @apply bg-surface-sunken border border-transparent rounded-lg;
+    }
+
+    /* The one primary action on a screen. */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 min-h-[2.75rem]
+               text-sm font-semibold transition-all duration-quick ease-swift
+               disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    }
+
+    .btn-brand {
+        @apply btn bg-brand text-brand-on hover:bg-brand-hover active:scale-[0.98];
+    }
+
+    .btn-quiet {
+        @apply btn bg-transparent text-ink-muted hover:bg-ink/5 hover:text-ink;
+    }
+
+    .btn-outline {
+        @apply btn border border-ink/15 bg-transparent text-ink hover:bg-ink/5 active:scale-[0.98];
+    }
+
+    .btn-danger {
+        @apply btn bg-status-danger text-white hover:opacity-90 active:scale-[0.98];
+    }
+
+    .btn-sm {
+        @apply min-h-[2.25rem] px-3 text-xs;
+    }
+
+    /* Form controls: one shape, one focus treatment. */
+    .field {
+        @apply w-full rounded-md border border-ink/15 bg-surface-raised px-3 py-2.5 text-sm text-ink
+               placeholder:text-ink-subtle transition-colors duration-quick
+               focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25;
+    }
+
+    .field-label {
+        @apply block text-sm font-semibold text-ink mb-1.5;
+    }
+
+    .field-help {
+        @apply text-xs text-ink-muted mt-1.5;
+    }
+
+    .field-error {
+        @apply text-xs text-status-danger-ink mt-1.5 font-medium;
+    }
+
+    /* Status chip: small, square-ish, carries a real state only. */
+    .chip {
+        @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold;
+    }
+
+    /* Table shell: quiet horizontal rules, no zebra, no shadow. */
+    .table-head {
+        @apply text-xs font-semibold uppercase tracking-wide text-ink-subtle;
+    }
+}
+
+@layer utilities {
+    .scrollbar-quiet {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(var(--ink) / 0.18) transparent;
+    }
+
+    .scrollbar-quiet::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .scrollbar-quiet::-webkit-scrollbar-thumb {
+        background-color: rgb(var(--ink) / 0.18);
+        border-radius: 999px;
+    }
+
+    .scrollbar-quiet::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+/* Motion is an enhancement, never a dependency. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+        color: #000;
+    }
+}
