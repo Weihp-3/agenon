@@ -7,7 +7,7 @@ import { Icon } from "@/components/icon";
 import { EmptyState } from "@/components/empty-state";
 import { rupiah } from "@/lib/format";
 
-export async function DashboardPage() {
+export default async function DashboardPage() {
   const user = await requireRole("user");
 
   // Count products with stock > 0 (same as Laravel: Product::where('stock', '>', 0)->select(['id'])->cursor())
@@ -18,7 +18,7 @@ export async function DashboardPage() {
   // Count completed transactions for this user
   const totalTransaksi = await db.transactions.count({
     where: {
-      user_id: user.id,
+      user_id: BigInt(user.id),
       status: "selesai",
     },
   });
@@ -60,7 +60,7 @@ export async function DashboardPage() {
           </div>
         </dl>
 
-        <a href="/pembelian" className="btn btn-outline btn-sm mt-4">
+        <a href="/profile/edit" className="btn btn-outline btn-sm mt-4">
           <Icon name="pencil" className="h-4 w-4" />
           Ubah data profil
         </a>
@@ -71,8 +71,8 @@ export async function DashboardPage() {
           <a href="/pembelian" className="flex items-center gap-3 rounded-lg border border-ink/10 px-4 py-3.5 transition-colors duration-quick ease-swift ease-swift hover:bg-ink/5">
             <Icon name="cart" className="h-5 w-5 shrink-0 text-brand" />
             <span className="min-w-0">
-              <span class="block text-sm font-semibold text-ink">Belanja</span>
-              <span class="block text-xs text-ink-muted">Pilih produk yang mau kamu beli</span>
+              <span className="block text-sm font-semibold text-ink">Belanja</span>
+              <span className="block text-xs text-ink-muted">Pilih produk yang mau kamu beli</span>
             </span>
             <Icon name="chevron-right" className="ml-auto h-4 w-4 shrink-0 text-ink-subtle" />
           </a>
@@ -80,8 +80,8 @@ export async function DashboardPage() {
           <a href="/pesanan" className="flex items-center gap-3 rounded-lg border border-ink/10 px-4 py-3.5 transition-colors duration-quick ease-swift ease-swift hover:bg-ink/5">
             <Icon name="orders" className="h-5 w-5 shrink-0 text-brand" />
             <span className="min-w-0">
-              <span class="block text-sm font-semibold text-ink">Pesanan saya</span>
-              <span class="block text-xs text-ink-muted">Lacak status pesanan aktif</span>
+              <span className="block text-sm font-semibold text-ink">Pesanan saya</span>
+              <span className="block text-xs text-ink-muted">Lacak status pesanan aktif</span>
             </span>
             <Icon name="chevron-right" className="ml-auto h-4 w-4 shrink-0 text-ink-subtle" />
           </a>
@@ -89,8 +89,8 @@ export async function DashboardPage() {
           <a href="/riwayat" className="flex items-center gap-3 rounded-lg border border-ink/10 px-4 py-3.5 transition-colors duration-quick ease-swift ease-swift hover:bg-ink/5">
             <Icon name="receipt" className="h-5 w-5 shrink-0 text-brand" />
             <span className="min-w-0">
-              <span class="block text-sm font-semibold text-ink">Riwayat</span>
-              <span class="block text-xs text-ink-muted">Semua transaksi sebelumnya</span>
+              <span className="block text-sm font-semibold text-ink">Riwayat</span>
+              <span className="block text-xs text-ink-muted">Semua transaksi sebelumnya</span>
             </span>
             <Icon name="chevron-right" className="ml-auto h-4 w-4 shrink-0 text-ink-subtle" />
           </a>

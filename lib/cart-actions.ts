@@ -21,19 +21,19 @@ export async function addToCart(
     return json(false, { error: "Jumlah tidak valid." });
   }
 
-  const product = await db.products.findUnique({ where: { id: productId } });
+  const product = await db.products.findUnique({ where: { id: BigInt(productId) } });
   if (!product) {
     return json(false, { error: "Produk tidak ditemukan." });
   }
 
   const cart = await getCart();
-  const existing = cart.find((item) => item.id === product.id);
+  const existing = cart.find((item) => item.id === Number(product.id));
 
   if (existing) {
     existing.qty += quantity;
   } else {
     const item: CartItem = {
-      id: product.id,
+      id: Number(product.id),
       name: product.name,
       price: product.price,
       qty: quantity,

@@ -2,237 +2,184 @@
 
 import { redirect } from "next/navigation";
 import { db } from "./db";
-import { format } from "./format";
 import { flashPath } from "./flash";
 import { requireRole } from "./auth";
-import type { FlashType } from "./flash";
+import { rupiah } from "./format";
+import { getCart, saveCart, cartTotal } from "./cart";
 
-/**
- * checkoutAction — mirrors KasirController@store exactly.
- * Validate payment fields, lock products in one transaction,
- * create transaction + items, decrement stock, clear cart,
- * then redirect to receipt with flashed success message.
- */
+/** POS checkout: validate stock, write transaction + items, decrement stock. */
 export async function checkoutAction(formData: FormData) {
-  const user = await requireRole("kasir");
+  await requireRole("kasir");
 
-  const payment_method = String(formData.get("payment_method"));
+  const payment_method = String(formData.get("payment_method") ?? "");
   if (!["cash", "qris", "transfer"].includes(payment_method)) {
     return redirect(flashPath("/kasir/checkout", "error", "Metode pembayaran tidak valid."));
   }
 
-  const cash_received = formData.get("cash_received") !== null ? Number(formData.get("cash_received")) : undefined;
-  const customer_name = String(formData.get("customer_name") ?? "Pelanggan");
-  // regex: ^[a-zA-Z0-9\s\.\-]+$  (same as Blade)
-  if (customer_name && !/^[a-zA-Z0-9\s\.\-]+$/.test(customer_name)) {
+  const customer_name = String(formData.get("customer_name") ?? "Pelanggan").trim() || "Pelanggan";
+  if (!/^[a-zA-Z0-9\s.\-]+$/.test(customer_name)) {
     return redirect(flashPath("/kasir/checkout", "error", "Nama pelanggan tidak valid."));
   }
 
-  // Read cart from cookie
-  const { getCart, saveCart, cartTotal } = await import("./cart");
   const cart = await getCart();
   if (cart.length === 0) {
     return redirect(flashPath("/kasir", "error", "Keranjang kosong. Tambahkan produk terlebih dahulu."));
   }
 
   const total = cartTotal(cart);
+  const productIds = cart.map((item) => BigInt(item.id));
+  const products = await db.products.findMany({ where: { id: { in: productIds } } });
+  const byId = new Map(products.map((p) => [p.id, p]));
 
-  // Begin Prisma transaction: lock products, validate stock, then write
-  try {
-    const productIds = cart.map((item) => item.id);
-    const products = await db.products.findMany({
-      where: { id: { in: productIds } },
-    });
-
-    // Build lookup map; if any missing -> error
-    const productMap = new Map(
-      products.map((p) => [String(p.id), p])
-    );
-
-    for (const item of cart) {
-      const product = productMap.get(String(item.id));
-      if (!product) {
-        return redirect(
-          flashPath("/kasir/checkout", "error", `Gagal menyimpan transaksi: Produk #${item.id} tidak ditemukan.`)
-        );
-      }
-      if (product.stock < item.qty) {
-        return redirect(
-          flashPath("/kasir/checkout", "error", `Gagal menyimpan transaksi: Stok ${product.name} tidak cukup. Tersedia: ${product.stock}`)
-        );
-      }
+  for (const item of cart) {
+    const product = byId.get(BigInt(item.id));
+    if (!product) {
+      return redirect(flashPath("/kasir/checkout", "error", `Produk #${item.id} tidak ditemukan.`));
     }
+    if (product.stock < item.qty) {
+      return redirect(
+        flashPath("/kasir/checkout", "error", `Stok ${product.name} tidak cukup. Tersedia: ${product.stock}`),
+      );
+    }
+  }
 
-    // Create transaction inside Prisma transaction
-    // Note: Prisma's $transaction is not directly available without importing;
-    // we emulate by doing writes sequentially after lock reads, which matches Laravel's lockForUpdate emulate.
-    // But to be safe and match exactly, we wrap in $transaction.
-    const result = await db.$transaction(async (tx) => {
-      // Create transaction
-      const transaction = await tx.transaction.create({
+  const shift = await db.shifts.findFirst({
+    where: { kasir_id: BigInt((await requireRole("kasir")).id), closed_at: null },
+  });
+
+  try {
+    const transaction = await db.$transaction(async (tx) => {
+      const created = await tx.transactions.create({
         data: {
-          user_id: user.id,
-          shift_id: null, // will be set via open shift if any; controller sets active shift id nullable
+          user_id: BigInt((await requireRole("kasir")).id),
+          shift_id: shift?.id ?? null,
           total_price: total,
-          payment_method,
+          payment_method: payment_method as "cash" | "qris" | "transfer",
           status: "selesai",
-          customer_name: customer_name === "Pelanggan" ? undefined : customer_name,
-          // In Laravel: 'customer_name' => $request->customer_name ?? 'Pelanggan';
-          // We pass the validated value; if it's the default we store the default too.
+          customer_name,
+          picked_up_at: new Date(),
         },
       });
 
-      // Create transaction items and decrement stock
+      await tx.transaction_items.createMany({
+        data: cart.map((item) => ({
+          transaction_id: created.id,
+          product_id: BigInt(item.id),
+          quantity: item.qty,
+          price: item.price,
+          subtotal: item.price * item.qty,
+        })),
+      });
+
       for (const item of cart) {
-        const product = productMap.get(String(item.id))!;
-        await tx.transaction_item.create({
-          data: {
-            transaction_id: transaction.id,
-            product_id: product.id,
-            quantity: item.qty,
-            price: item.price,
-            subtotal: item.price * item.qty,
-          },
-        });
-        // decrement stock
-        await tx.product.update({
-          where: { id: product.id },
+        await tx.products.update({
+          where: { id: BigInt(item.id) },
           data: { stock: { decrement: item.qty } },
         });
       }
 
-      // Clear cart cookie
-      saveCart([]);
-
-      return { transaction };
+      return created;
     });
 
-    const transaction = result.transaction;
-
-    // Redirect to receipt with success flash
-    const rupiahTotal = rupiah(transaction.total_price);
-    return redirect(flashPath(`/kasir/receipt/${transaction.id}`, "success", `Transaksi berhasil! Total: Rp ${rupiahTotal}`));
+    await saveCart([]);
+    return redirect(
+      flashPath(
+        `/kasir/receipt/${transaction.id}`,
+        "success",
+        `Transaksi berhasil. Total Rp ${rupiah(transaction.total_price)}`,
+      ),
+    );
   } catch (error) {
-    console.error(error);
-    return redirect(flashPath("/kasir/checkout", "error", "Gagal menyimpan transaksi: " + (error instanceof Error ? error.message : "Terjadi kesalahan")));
+    console.error("checkout error", error);
+    return redirect(flashPath("/kasir/checkout", "error", "Gagal menyimpan transaksi. Coba lagi."));
   }
 }
 
-/**
- * markReadyAction — only from status menunggu, set siap + ready_at=now;
- * insert notifications row for transaction owner exactly as controller;
- * redirect back with success / error message.
- */
+/** Mark a waiting order as ready and notify its owner. */
 export async function markReadyAction(id: string) {
-  const user = await requireRole("kasir");
+  await requireRole("kasir");
+  const txId = BigInt(id);
 
-  try {
-    const transaction = await db.transaction.findUnique({ where: { id: Number(id) } });
-    if (!transaction) {
-      return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak ditemukan."));
-    }
-    if (transaction.status !== "menunggu") {
-      return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak dalam status menunggu."));
-    }
-
-    await db.transaction.update({
-      where: { id: Number(id) },
-      data: {
-        status: "siap",
-        ready_at: new Date(),
-      },
-    });
-
-    // Notify owner exactly as controller
-    await db.notification.create({
-      data: {
-        user_id: transaction.user_id,
-        title: `Pesanan Siap Diambil #${transaction.id}`,
-        message: `Pesananmu sudah disiapkan kasir. Silakan ambil di warung dengan kode: ${transaction.pickup_code}`,
-        type: "success" as const,
-        category: "purchase" as const,
-        icon: "fa-circle-check",
-        data: { transaction_id: transaction.id },
-      },
-    });
-
-    const rupiahTotal = rupiah(transaction.total_price);
-    return redirect(flashPath("/kasir/pesanan", "success", `Pesanan #${transaction.id} ditandai siap diambil. Total: Rp ${rupiahTotal}`));
-  } catch (error) {
-    console.error(error);
-    return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak dapat diupdate."));
+  const transaction = await db.transactions.findUnique({ where: { id: txId } });
+  if (!transaction) {
+    return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak ditemukan."));
   }
+  if (transaction.status !== "menunggu") {
+    return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak dalam status menunggu."));
+  }
+
+  await db.transactions.update({
+    where: { id: txId },
+    data: { status: "siap", ready_at: new Date() },
+  });
+
+  await db.notifications.create({
+    data: {
+      user_id: transaction.user_id,
+      title: `Pesanan Siap Diambil #${transaction.id}`,
+      message: `Pesananmu sudah disiapkan kasir. Ambil di warung dengan kode: ${transaction.pickup_code}`,
+      type: "success",
+      category: "purchase",
+      icon: "fa-circle-check",
+      data: { transaction_id: String(transaction.id) },
+    },
+  });
+
+  return redirect(flashPath("/kasir/pesanan", "success", `Pesanan #${transaction.id} ditandai siap diambil.`));
 }
 
-/**
- * markPickedUpAction — only from menunggu/siap; set selesai + picked_up_at;
- * notify owner; redirect back success / error message.
- */
+/** Mark an order as picked up and notify its owner. */
 export async function markPickedUpAction(id: string) {
-  const user = await requireRole("kasir");
+  await requireRole("kasir");
+  const txId = BigInt(id);
 
-  try {
-    const transaction = await db.transaction.findUnique({ where: { id: Number(id) } });
-    if (!transaction) {
-      return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak ditemukan."));
-    }
-    if (!["menunggu", "siap"].includes(transaction.status)) {
-      return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak dapat diselesaikan."));
-    }
-
-    await db.transaction.update({
-      where: { id: Number(id) },
-      data: {
-        status: "selesai",
-        picked_up_at: new Date(),
-      },
-    });
-
-    // Notify owner exactly as controller
-    await db.notification.create({
-      data: {
-        user_id: transaction.user_id,
-        title: `Pesanan Selesai #${transaction.id}`,
-        message: `Pesananmu sudah diambil. Terima kasih sudah berbelanja di Warung Mama Zaviyar.`,
-        type: "success" as const,
-        category: "purchase" as const,
-        icon: "fa-circle-check",
-        data: { transaction_id: transaction.id },
-      },
-    });
-
-    return redirect(flashPath("/kasir/pesanan", "success", `Pesanan #${transaction.id} diselesaikan.`));
-  } catch (error) {
-    console.error(error);
+  const transaction = await db.transactions.findUnique({ where: { id: txId } });
+  if (!transaction) {
+    return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak ditemukan."));
+  }
+  if (!["menunggu", "siap"].includes(transaction.status)) {
     return redirect(flashPath("/kasir/pesanan", "error", "Pesanan tidak dapat diselesaikan."));
   }
+
+  await db.transactions.update({
+    where: { id: txId },
+    data: { status: "selesai", picked_up_at: new Date() },
+  });
+
+  await db.notifications.create({
+    data: {
+      user_id: transaction.user_id,
+      title: `Pesanan Selesai #${transaction.id}`,
+      message: "Pesananmu sudah diambil. Terima kasih sudah berbelanja di Warung Mama Zaviyar.",
+      type: "success",
+      category: "purchase",
+      icon: "fa-circle-check",
+      data: { transaction_id: String(transaction.id) },
+    },
+  });
+
+  return redirect(flashPath("/kasir/pesanan", "success", `Pesanan #${transaction.id} diselesaikan.`));
 }
 
-/**
- * startShiftAction — validates opening_balance numeric >=0;
- * if an open shift exists -> redirect back error;
- * else create shift {kasir_id, opened_at: now, opening_balance, status:'open'};
- * redirect /kasir/dashboard success.
- */
+/** Open a cashier shift. */
 export async function startShiftAction(formData: FormData) {
   const user = await requireRole("kasir");
-
   const opening_balance = Number(formData.get("opening_balance"));
+
   if (!Number.isFinite(opening_balance) || opening_balance < 0) {
-    return redirect(flashPath("/kasir/dashboard", "error", "Saldo pembukaan harus berupa angka >= 0."));
+    return redirect(flashPath("/kasir/dashboard", "error", "Saldo pembukaan harus angka >= 0."));
   }
 
-  // Check if open shift exists
-  const existingShift = await db.shifts.findFirst({
-    where: { kasir_id: user.id, closed_at: null },
+  const existing = await db.shifts.findFirst({
+    where: { kasir_id: BigInt(user.id), closed_at: null },
   });
-  if (existingShift) {
-    return redirect(flashPath("/kasir/dashboard", "error", "Anda sudah memiliki shift yang aktif. Tutup shift terlebih dahulu."));
+  if (existing) {
+    return redirect(flashPath("/kasir/dashboard", "error", "Kamu sudah punya shift aktif. Tutup dulu."));
   }
 
   await db.shifts.create({
     data: {
-      kasir_id: user.id,
+      kasir_id: BigInt(user.id),
       opened_at: new Date(),
       opening_balance,
       status: "open",
@@ -242,41 +189,32 @@ export async function startShiftAction(formData: FormData) {
   return redirect(flashPath("/kasir/dashboard", "success", "Shift berhasil dimulai."));
 }
 
-/**
- * endShiftAction — validates actual_cash numeric >=0 and notes nullable max 500;
- * find own open shift inside a transaction; expected = opening_balance +
- * sum(total_price of shift transactions status selesai payment_method cash);
- * discrepancy = actual - expected; set closed_at, expected_cash, actual_cash,
- * discrepancy, notes, status closed; redirect /kasir/dashboard.
- */
+/** Close the cashier shift and compute expected cash + discrepancy. */
 export async function endShiftAction(formData: FormData) {
   const user = await requireRole("kasir");
-
   const actual_cash = Number(formData.get("actual_cash"));
+
   if (!Number.isFinite(actual_cash) || actual_cash < 0) {
-    return redirect(flashPath("/kasir/dashboard", "error", "Uang kas harus berupa angka >= 0."));
+    return redirect(flashPath("/kasir/dashboard", "error", "Uang kas harus angka >= 0."));
   }
 
-  const notes = formData.get("notes") !== null ? String(formData.get("notes")) : undefined;
-  if (notes !== undefined && notes.length > 500) {
+  const notes = String(formData.get("notes") ?? "") || undefined;
+  if (notes && notes.length > 500) {
     return redirect(flashPath("/kasir/dashboard", "error", "Catatan maksimal 500 karakter."));
   }
 
-  // Find own open shift
   const shift = await db.shifts.findFirst({
-    where: { kasir_id: user.id, closed_at: null },
+    where: { kasir_id: BigInt(user.id), closed_at: null },
   });
   if (!shift) {
-    return redirect(flashPath("/kasir/dashboard", "error", "Anda tidak memiliki shift yang aktif."));
+    return redirect(flashPath("/kasir/dashboard", "error", "Kamu tidak punya shift aktif."));
   }
 
-  // Calculate expected cash from shift transactions (status selesai, payment_method cash)
-  const shiftTransactions = await db.transaction.findMany({
+  const sales = await db.transactions.aggregate({
     where: { shift_id: shift.id, status: "selesai", payment_method: "cash" },
-    select: { total_price: true },
+    _sum: { total_price: true },
   });
-  const expectedCash = shiftTransactions.reduce((sum, t) => sum + t.total_price, 0) + shift.opening_balance;
-
+  const expectedCash = (sales._sum.total_price ?? 0) + Number(shift.opening_balance);
   const discrepancy = actual_cash - expectedCash;
 
   await db.shifts.update({
@@ -284,7 +222,7 @@ export async function endShiftAction(formData: FormData) {
     data: {
       closed_at: new Date(),
       expected_cash: expectedCash,
-      actual_cash,
+      actual_cash: actual_cash,
       discrepancy,
       notes,
       status: "closed",

@@ -123,8 +123,8 @@ export type SessionUser = {
 };
 
 /**
- * Port of CheckRole: `user` and `siswa` are one role under two names, and a
- * role mismatch aborts with 403 rather than bouncing to login.
+ * Port of CheckRole: role mismatch aborts with 403 rather than bouncing to
+ * login. The `user` role is the single customer role.
  */
 export function hasRole(
   user: { role?: string | null } | null | undefined,
@@ -132,13 +132,7 @@ export function hasRole(
 ): boolean {
   if (!user) return false;
 
-  const allowed = new Set<string>();
-  for (const role of roles) {
-    allowed.add(role);
-    if (role === "user") allowed.add("siswa");
-    if (role === "siswa") allowed.add("user");
-  }
-
+  const allowed = new Set<string>(roles);
   return allowed.has(user.role ?? "user");
 }
 

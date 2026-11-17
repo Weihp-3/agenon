@@ -1,9 +1,11 @@
 "use server";
 
-import { v4 as randomUUID } from "crypto";
+import { randomUUID } from "crypto";
+import { redirect } from "next/navigation";
 import { db } from "./db";
 import fs from "fs/promises";
 import path from "path";
+import { requireRole } from "./auth";
 
 const PUBLIC_DIR = path.resolve("public");
 const PRODUCTS_STORAGE_DIR = path.join(PUBLIC_DIR, "storage", "products");
@@ -23,6 +25,7 @@ function dbImagePath(file: string): string {
 }
 
 export async function storeProduct(formData: FormData) {
+  await requireRole("admin");
   const name = String(formData.get("name") ?? "").trim();
   const price = formData.get("price");
   const stock = formData.get("stock");
@@ -87,6 +90,7 @@ export async function storeProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
+  await requireRole("admin");
   const name = String(formData.get("name") ?? "").trim();
   const price = formData.get("price");
   const stock = formData.get("stock");
@@ -171,10 +175,11 @@ export async function updateProduct(id: string, formData: FormData) {
   };
 }
 
-export async function destroyProduct(id: string) {
-  const product = await db.products.findUnique({ where: { id: Number(id) } });
+export async function destroyProduct(id: string): Promise<void> {
+  await requireRole("admin");
+  const product = await db.products.findUnique({ where: { id: BigInt(id) } });
   if (!product) {
-    return { success: false, error: "Produk tidak ditemukan." };
+    redirect("/products?flash=error&msg=Produk+tidak+ditemukan.");
   }
 
   // Delete image file if exists
@@ -185,10 +190,7 @@ export async function destroyProduct(id: string) {
     } catch {}
   }
 
-  await db.products.delete({ where: { id: Number(id) } });
+  await db.products.delete({ where: { id: BigInt(id) } });
 
-  return {
-    success: true,
-    message: "Produk berhasil dihapus",
-  };
+  redirect("/products?flash=success&msg=Produk+berhasil+dihapus.");
 }

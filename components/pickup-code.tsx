@@ -7,7 +7,7 @@ const sizes: Record<string, string> = {
 };
 
 /**
- * The pickup code is this shop's signature token: what a student says at the
+ * The pickup code is this shop's signature token: what a customer says at the
  * counter and what the cashier reads. It gets the only monospace on the site.
  */
 export function PickupCode({

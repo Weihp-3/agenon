@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 
 import "./globals.css";
@@ -19,9 +20,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Applied before first paint so a dark-mode user never sees a white flash.
-const themeScript = `(function(){var stored=localStorage.getItem('theme');var dark=stored==='dark'||(!stored&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',dark);})();`;
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className="h-full" suppressHydrationWarning>
@@ -32,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
           rel="stylesheet"
         />
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script src="/js/theme-init.js" strategy="beforeInteractive" />
       </head>
       <body className="min-h-full bg-surface text-ink antialiased">{children}</body>
     </html>

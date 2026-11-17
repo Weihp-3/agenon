@@ -1,72 +1,71 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { db } from "./db";
+import { requireRole } from "./auth";
 
-export async function verifyAction(id: string) {
-  const transactionId = Number(id);
+/** Verify a payment: mark the transaction as selesai. */
+export async function verifyAction(id: string): Promise<void> {
+  await requireRole("admin", "kasir");
+  const txId = BigInt(id);
+
+  const transaction = await db.transactions.findUnique({ where: { id: txId } });
+  if (!transaction) {
+    return redirect("/transactions/pending?flash=error&msg=Transaksi+tidak+ditemukan.");
+  }
 
   await db.transactions.update({
-    where: { id: transactionId },
+    where: { id: txId },
     data: { status: "selesai" },
   });
 
-  return {
-    success: true,
-    message: "Transaksi berhasil diverifikasi.",
-    redirectPath: "/admin/dashboard",
-  };
+  return redirect("/transactions/pending?flash=success&msg=Transaksi+berhasil+diverifikasi.");
 }
 
-export async function rejectAction(id: string) {
-  const transactionId = Number(id);
+/** Reject a payment: restore stock once and mark the transaction batal. */
+export async function rejectAction(id: string): Promise<void> {
+  await requireRole("admin", "kasir");
+  const txId = BigInt(id);
 
   const transaction = await db.transactions.findUnique({
-    where: { id: transactionId },
-    include: { items: { include: { product: true } } },
+    where: { id: txId },
+    include: { transaction_items: true },
   });
 
   if (!transaction) {
-    return { success: false, error: "Transaksi tidak ditemukan." };
+    return redirect("/transactions/pending?flash=error&msg=Transaksi+tidak+ditemukan.");
+  }
+  if (transaction.status === "batal") {
+    return redirect("/transactions/pending?flash=error&msg=Transaksi+sudah+dibatalkan.");
   }
 
-  // Idempotent stock restore: lock products, restore stock ONLY if current status <> 'batal'
-  // This prevents double-restock on repeated rejects — one transaction, one stock restore.
-  await db.$transaction(async (trx) => {
-    const productIds = transaction.items.map((item) => item.product_id);
-
-    if (productIds.length > 0) {
-      // Lock products to prevent concurrent read-stale issues
-      await trx.$executeRaw`${trx.$queryRunner.connection.query(
-        `SELECT id FROM products WHERE id IN (${productIds.join(",")}) FOR UPDATE`
-      )}`;
+  await db.$transaction(async (tx) => {
+    for (const item of transaction.transaction_items) {
+      await tx.products.update({
+        where: { id: item.product_id },
+        data: { stock: { increment: item.quantity } },
+      });
     }
 
-    for (const item of transaction.items) {
-      if (item.product) {
-        // Only restore stock if current status is not already 'batal'
-        // This makes the operation idempotent: repeated rejects won't double-restock
-        await trx.product.update({
-          where: { id: item.product_id },
-          data: {
-            stock: item.product.status === "batal"
-              ? item.product.stock
-              : item.product.stock + item.quantity,
-          },
-        });
-      }
-    }
-
-    // Set status to batal regardless (already Batal -> no-op on stock)
-    await trx.transaction.update({
-      where: { id: transactionId },
+    await tx.transactions.update({
+      where: { id: txId },
       data: { status: "batal" },
+    });
+
+    await tx.notifications.create({
+      data: {
+        user_id: transaction.user_id,
+        title: `Pembayaran Ditolak #${transaction.id}`,
+        message: "Pembayaranmu ditolak. Stok sudah dikembalikan.",
+        type: "error",
+        category: "purchase",
+        icon: "fa-xmark",
+        data: { transaction_id: String(transaction.id) },
+      },
     });
   });
 
-  return {
-    success: true,
-    message:
-      "Transaksi pembayaran berhasil ditolak dan stok dikembalikan.",
-    redirectPath: "/admin/dashboard",
-  };
+  return redirect(
+    "/transactions/pending?flash=success&msg=Pembayaran+ditolak+dan+stok+dikembalikan.",
+  );
 }

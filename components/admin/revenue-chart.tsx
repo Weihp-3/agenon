@@ -1,26 +1,19 @@
 "use client";
 
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Bar } from "chart.js";
-import { rupiah } from "@/lib/format";
+import { Chart, registerables } from "chart.js";
 
-// Register needed chart.js components
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, Bar);
+Chart.register(...registerables);
 
 export function RevenueChart({
   labels,
   data,
-  chartCounts,
 }: {
   labels: string[];
   data: number[];
   chartCounts?: number[];
 }) {
-  const [chart, setChart] = useState<ChartJS.Chart | null>(null);
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const [chart, setChart] = useState<Chart | null>(null);
 
   useEffect(() => {
     if (!labels.length || typeof window === "undefined") return;
@@ -28,30 +21,32 @@ export function RevenueChart({
     const canvas = document.getElementById("salesChart") as HTMLCanvasElement | null;
     if (!canvas) return;
 
-    // Destroy existing chart to avoid memory leaks
-    if (chart) {
-      chart.destroy();
-    }
+    if (chart) chart.destroy();
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const brand = `rgb(${getComputedStyle(document.documentElement).getPropertyValue("--brand")})`;
-    const ink = () => `rgb(${getComputedStyle(document.documentElement).getPropertyValue("--ink")})`;
-    const inkInverse = () => `rgb(${getComputedStyle(document.documentElement).getPropertyValue("--ink-inverse")})`;
-    const inkFaint = () => `rgba(${getComputedStyle(document.documentElement).getPropertyValue("--ink")}, 0.08)`;
+    const css = getComputedStyle(document.documentElement);
+    const brand = `rgb(${css.getPropertyValue("--brand").trim()})`;
+    const ink = () => `rgb(${getComputedStyle(document.documentElement).getPropertyValue("--ink").trim()})`;
+    const inkInverse = () =>
+      `rgb(${getComputedStyle(document.documentElement).getPropertyValue("--ink-inverse").trim()})`;
+    const inkFaint = () =>
+      `rgba(${getComputedStyle(document.documentElement).getPropertyValue("--ink").trim()}, 0.08)`;
 
-    const myChart = new ChartJS.Chart(ctx, {
+    const myChart = new Chart(ctx, {
       type: "bar",
       data: {
         labels,
-        datasets: [{
-          label: "Pendapatan",
-          data,
-          backgroundColor: brand,
-          borderRadius: 4,
-          maxBarThickness: 36,
-        }],
+        datasets: [
+          {
+            label: "Pendapatan",
+            data,
+            backgroundColor: brand,
+            borderRadius: 4,
+            maxBarThickness: 36,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -63,12 +58,9 @@ export function RevenueChart({
             titleColor: inkInverse(),
             bodyColor: inkInverse(),
             padding: 12,
-            titleFont: { size: 12 },
-            bodyFont: { size: 13, weight: "bold" },
             callbacks: {
-              label: function (context: any) {
-                return "Pendapatan: Rp " + context.parsed.y.toLocaleString("id-ID");
-              },
+              label: (context) =>
+                "Pendapatan: Rp " + Number(context.parsed.y).toLocaleString("id-ID"),
             },
           },
         },
@@ -83,10 +75,11 @@ export function RevenueChart({
             ticks: {
               color: ink(),
               font: { size: 11 },
-              callback: function (value: number) {
-                if (value >= 1000000) return "Rp " + (value / 1000000).toFixed(1) + "M";
-                if (value >= 1000) return "Rp " + (value / 1000).toFixed(0) + "k";
-                return "Rp " + value;
+              callback: (value) => {
+                const v = Number(value);
+                if (v >= 1000000) return "Rp " + (v / 1000000).toFixed(1) + "M";
+                if (v >= 1000) return "Rp " + (v / 1000).toFixed(0) + "k";
+                return "Rp " + v;
               },
             },
           },
@@ -96,26 +89,27 @@ export function RevenueChart({
 
     setChart(myChart);
 
-    // Theme apply on class change
     function applyTheme() {
-      if (myChart) {
-        myChart.data.datasets[0].backgroundColor = brand;
-        myChart.options.scales.x.ticks.color = ink();
-        myChart.options.scales.y.ticks.color = ink();
-        myChart.options.scales.y.grid.color = inkFaint();
-        myChart.update("none");
-      }
+      const scales = myChart.options.scales;
+      if (!scales?.x?.ticks || !scales.y?.ticks || !scales.y.grid) return;
+      myChart.data.datasets[0].backgroundColor = brand;
+      scales.x.ticks.color = ink();
+      scales.y.ticks.color = ink();
+      scales.y.grid.color = inkFaint();
+      myChart.update("none");
     }
 
-    new MutationObserver(applyTheme).observe(document.documentElement, {
+    const observer = new MutationObserver(applyTheme);
+    observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
     });
 
     return () => {
-      if (myChart) myChart.destroy();
+      observer.disconnect();
+      myChart.destroy();
     };
-  }, [labels, data, chartCounts]);
+  }, [labels, data]);
 
   return null;
 }

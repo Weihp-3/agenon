@@ -219,7 +219,7 @@ export function roleLabel(role: string | null | undefined): string {
     case "kasir":
       return "Kasir";
     default:
-      return "Siswa";
+      return "User";
   }
 }
 

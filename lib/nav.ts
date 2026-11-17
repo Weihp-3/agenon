@@ -13,7 +13,7 @@ export type NavItem = {
 
 /**
  * Port of AppServiceProvider::menuFor(). Route names became paths; the
- * `user` role and the `siswa` alias share one menu.
+ * `user` role is the single customer role.
  */
 export function menuFor(role: string | undefined | null): NavItem[] {
   switch (role) {
@@ -45,8 +45,8 @@ export function menuFor(role: string | undefined | null): NavItem[] {
 
     default:
       return [
-        { label: "Dashboard", href: "/user/dashboard", icon: "home", match: ["/user/dashboard", "/siswa/dashboard"] },
-        { label: "Beli Produk", href: "/pembelian", icon: "cart", match: ["/pembelian", "/siswa/pembelian"] },
+        { label: "Dashboard", href: "/user/dashboard", icon: "home", match: ["/user/dashboard"] },
+        { label: "Beli Produk", href: "/pembelian", icon: "cart", match: ["/pembelian"] },
         { label: "Pesanan Saya", href: "/pesanan", icon: "orders", match: ["/pesanan"], badge: "orders" },
         { label: "Riwayat Belanja", href: "/riwayat", icon: "receipt", match: ["/riwayat"] },
       ];
@@ -62,7 +62,7 @@ export async function pendingCount(
     return db.transactions.count({ where: { status: "menunggu" } });
   }
 
-  if (role === "user" || role === "siswa") {
+  if (role === "user") {
     return db.transactions.count({
       where: { user_id: BigInt(userId), status: { in: ["menunggu", "siap"] } },
     });
