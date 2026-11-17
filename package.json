@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy"
   },
@@ -43,6 +44,8 @@
     "unrs-resolver"
   ],
   "trustedDependencies": [
+    "@prisma/client",
+    "prisma",
     "sharp",
     "unrs-resolver"
   ]
