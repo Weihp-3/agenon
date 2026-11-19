@@ -21,23 +21,35 @@ const features = [
 export default function LandingPage() {
   return (
     <main className="flex-1">
-      {/* Top panel */}
-      <div className="border-b border-ink/10 bg-brand text-brand-on">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-2.5 text-xs sm:flex-row sm:items-center sm:justify-between">
-          <span className="flex items-center gap-2 font-semibold">
-            <Icon name="pin" className="h-4 w-4" />
-            Jl. Raya Serpong No. 42, Tangerang
-          </span>
-          <span className="flex items-center gap-2">
-            <Icon name="clock" className="h-4 w-4" />
-            Buka 07.00–21.00 WIB setiap hari
-            <span className="mx-2 hidden h-3 w-px bg-brand-on/40 sm:block" />
-            <Link href="/login" className="font-semibold underline underline-offset-2 hover:no-underline">
+      {/* Top navigation panel */}
+      <header className="sticky top-0 z-40 border-b border-ink/10 bg-surface-raised/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand text-brand-on">
+              <Icon name="store" className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 leading-tight">
+              <span className="block truncate text-sm font-bold text-ink">Warung Mama Zaviyar</span>
+              <span className="block truncate text-[11px] text-ink-muted">Pesan dan ambil di warung</span>
+            </span>
+          </Link>
+
+          <nav aria-label="Navigasi utama" className="flex flex-wrap items-center gap-1">
+            <Link href="/pembelian" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+              Produk
+            </Link>
+            <Link href="/#cara-belanja" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+              Cara belanja
+            </Link>
+            <Link href="/#kasir-admin" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+              Kasir & Admin
+            </Link>
+            <Link href="/login" className="btn btn-brand btn-sm ml-1">
               Masuk
             </Link>
-          </span>
+          </nav>
         </div>
-      </div>
+      </header>
 
       {/* Hero */}
       <section className="bg-surface px-4 py-12 md:py-20 lg:py-24">
@@ -89,8 +101,8 @@ export default function LandingPage() {
             className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-sunken"
           >
             <Image
-              src="/images/warung-hero.jpg"
-              alt="Rak produk di Warung Mama Zaviyar"
+              src="/images/minimarket-3.jpg"
+              alt="Interior minimarket yang bersih dan rapi"
               fill
               priority
               className="object-cover"
@@ -101,7 +113,7 @@ export default function LandingPage() {
       </section>
 
       {/* Cara pakai */}
-      <section className="bg-surface-sunken px-4 py-16 md:py-24">
+      <section id="cara-belanja" className="scroll-mt-20 bg-surface-sunken px-4 py-16 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -135,7 +147,7 @@ export default function LandingPage() {
       </section>
 
       {/* Untuk kasir & admin */}
-      <section className="bg-surface px-4 py-16 md:py-24">
+      <section id="kasir-admin" className="scroll-mt-20 bg-surface px-4 py-16 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -145,8 +157,8 @@ export default function LandingPage() {
         >
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-sunken">
             <Image
-              src="/images/warung-interior.jpg"
-              alt="Suasana warung di Tangerang"
+              src="/images/minimarket-2.jpg"
+              alt="Tampak depan minimarket yang bersih"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -251,7 +263,7 @@ export default function LandingPage() {
               © {new Date().getFullYear()} Warung Mama Zaviyar. Hak cipta dilindungi.
             </p>
             <p className="mt-2 text-center text-xs text-ink-subtle md:text-left">
-              Foto: Warung Kelontong (CC BY-SA 4.0), Warung Kuta (CC BY-SA 4.0), Wikimedia Commons.
+              Foto: Convenience store interior (CC BY-SA 3.0), Fresh Mart Puncak (CC BY-SA 4.0), Wikimedia Commons.
             </p>
           </div>
         </div>
