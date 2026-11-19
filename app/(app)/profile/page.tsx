@@ -68,13 +68,16 @@ export default async function ProfilePage() {
             <Icon name="pencil" className="h-4 w-4" />
             Ubah data profil
           </a>
-          <a href="/forgot-password" className="btn btn-outline btn-sm">
-            <Icon name="cog" className="h-4 w-4" />
+          <a href="/profile/password" className="btn btn-outline btn-sm">
+            <Icon name="lock" className="h-4 w-4" />
             Ubah kata sandi
           </a>
           <p className="text-xs text-ink-muted">
-            Kami akan mengirim tautan pengaturan ulang ke email terdaftar kamu.
+            Lupa kata sandi? Gunakan halaman lupa kata sandi untuk mengirim tautan ke email.
           </p>
+          <a href="/forgot-password" className="text-xs font-semibold text-brand hover:underline">
+            Lupa kata sandi?
+          </a>
         </div>
       </Panel>
     </div>

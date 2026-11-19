@@ -42,30 +42,6 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <Panel title="Akun kamu" description="Data ini dipakai untuk memproses pesanan dan takinganmu.">
-        <dl className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs font-semibold text-ink-muted">Nama</dt>
-            <dd className="mt-1 truncate text-sm font-semibold text-ink">
-              {user.name}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-xs font-semibold text-ink-muted">Email</dt>
-            <dd className="mt-1 flex items-center gap-2 truncate text-sm font-semibold text-ink">
-              <Icon name="mail" className="h-4 w-4 shrink-0 text-ink-subtle" />
-              {user.email}
-            </dd>
-          </div>
-        </dl>
-
-        <a href="/profile/edit" className="btn btn-outline btn-sm mt-4">
-          <Icon name="pencil" className="h-4 w-4" />
-          Ubah data profil
-        </a>
-      </Panel>
-
       <Panel title="Pintasan cepat" description="Langsung ke bagian yang paling sering dipakai.">
         <div className="grid gap-3 sm:grid-cols-3">
           <a href="/pembelian" className="flex items-center gap-3 rounded-lg border border-ink/10 px-4 py-3.5 transition-colors duration-quick ease-swift ease-swift hover:bg-ink/5">
