@@ -13,22 +13,22 @@
         color-scheme: light;
 
         /* Ground and surfaces: three steps of tone, never a shadow. */
-        --surface: 246 248 252;
+        --surface: 222 245 229;
         --surface-raised: 255 255 255;
-        --surface-sunken: 238 242 249;
+        --surface-sunken: 188 234 213;
 
         /* Ink: one full-strength text colour, plus two receding steps. */
-        --ink: 15 23 42;
-        --ink-muted: 71 85 105;
-        --ink-subtle: 116 132 154;
+        --ink: 17 34 28;
+        --ink-muted: 58 80 71;
+        --ink-subtle: 106 128 118;
         --ink-inverse: 255 255 255;
 
-        /* Brand: the single accent. Blue ink on white paper. */
-        --brand: 37 99 235;
-        --brand-hover: 29 78 216;
-        --brand-soft: 239 246 255;
-        --brand-soft-ink: 29 78 216;
-        --brand-on: 255 255 255;
+        /* Brand: the single accent. Mint #8EC3B0, dark green text on it. */
+        --brand: 142 195 176;
+        --brand-hover: 158 213 197;
+        --brand-soft: 188 234 213;
+        --brand-soft-ink: 23 63 51;
+        --brand-on: 20 44 37;
 
         /* Status colours: reserved for state, never decoration. */
         --status-ok: 22 128 74;
@@ -51,20 +51,20 @@
     .dark {
         color-scheme: dark;
 
-        --surface: 8 14 26;
-        --surface-raised: 16 25 42;
-        --surface-sunken: 5 10 19;
+        --surface: 7 18 15;
+        --surface-raised: 12 28 23;
+        --surface-sunken: 4 12 10;
 
-        --ink: 226 232 240;
-        --ink-muted: 148 163 184;
-        --ink-subtle: 113 128 148;
-        --ink-inverse: 8 14 26;
+        --ink: 226 240 234;
+        --ink-muted: 148 170 160;
+        --ink-subtle: 113 136 126;
+        --ink-inverse: 7 18 15;
 
-        --brand: 96 165 250;
-        --brand-hover: 147 197 253;
-        --brand-soft: 22 38 68;
-        --brand-soft-ink: 147 197 253;
-        --brand-on: 6 12 24;
+        --brand: 142 195 176;
+        --brand-hover: 158 213 197;
+        --brand-soft: 21 46 38;
+        --brand-soft-ink: 188 234 213;
+        --brand-on: 7 18 15;
 
         --status-ok: 74 222 128;
         --status-ok-soft: 10 38 26;

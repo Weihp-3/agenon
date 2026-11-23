@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { loginAction } from "@/lib/session-actions";
 import { Flash } from "@/components/flash";
 import { PasswordInput } from "@/components/password-input";
@@ -44,11 +45,18 @@ function LoginForm() {
       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <h1 className="text-xl font-bold text-ink">Masuk ke akunmu</h1>
-      <p className="mt-1.5 text-sm text-ink-muted">Isi email dan kata sandi untuk melanjutkan.</p>
 
       <Flash errors={error ? [error] : undefined} />
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <GoogleSignInButton callbackUrl={callbackUrl} />
+
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-subtle">
+        <span className="h-px flex-1 bg-ink/10" />
+        atau pakai email
+        <span className="h-px flex-1 bg-ink/10" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="field-label">Email</label>
           <input

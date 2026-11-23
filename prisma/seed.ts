@@ -8,7 +8,11 @@ const db = new PrismaClient();
  * tidak ada transaksi contoh. Produk diisi lewat halaman admin.
  */
 async function main() {
-  const password = await bcrypt.hash("rahasia123", 12);
+  const seedPassword = process.env.SEED_PASSWORD;
+  if (!seedPassword) {
+    throw new Error("SEED_PASSWORD wajib diisi sebelum menjalankan seed.");
+  }
+  const password = await bcrypt.hash(seedPassword, 12);
 
   const users = [
     { name: "Admin Warung", email: "admin@warung.test", role: "admin" },

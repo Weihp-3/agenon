@@ -15,7 +15,7 @@ export default async function KasirDashboardPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [todaySales, todayCount, waitingCount, openShift] = await Promise.all([
+  const [todaySales, todayCount, waitingCount, openShift, previousShift] = await Promise.all([
     db.transactions.aggregate({
       where: {
         status: "selesai",
@@ -32,7 +32,23 @@ export default async function KasirDashboardPage() {
       where: { kasir_id: kasirId, closed_at: null },
       orderBy: { opened_at: "desc" },
     }),
+    db.shifts.findFirst({
+      where: { kasir_id: kasirId, closed_at: { not: null } },
+      orderBy: { closed_at: "desc" },
+      select: { actual_cash: true },
+    }),
   ]);
+
+  const shiftCashSales = openShift
+    ? await db.transactions.aggregate({
+        where: { shift_id: openShift.id, status: "selesai", payment_method: "cash" },
+        _sum: { total_price: true },
+        _count: { id: true },
+      })
+    : null;
+  const expectedCash = openShift
+    ? Number(openShift.opening_balance) + Number(shiftCashSales?._sum.total_price ?? 0)
+    : 0;
 
   return (
     <div className="space-y-5">
@@ -72,12 +88,17 @@ export default async function KasirDashboardPage() {
           title={openShift ? "Shift berjalan" : "Buka shift baru"}
           description={
             openShift
-              ? `Saldo pembukaan Rp ${rupiah(Number(openShift.opening_balance))}`
-              : "Catat uang kas pembukaan sebelum melayani pelanggan."
+              ? `Saldo pembukaan Rp ${rupiah(Number(openShift.opening_balance))} · Harapan kas Rp ${rupiah(expectedCash)}`
+              : previousShift?.actual_cash != null
+                ? `Saldo otomatis dari shift sebelumnya: Rp ${rupiah(Number(previousShift.actual_cash))}`
+                : "Saldo awal hanya perlu diisi saat shift pertama."
           }
         >
           {openShift ? (
             <form action={endShiftAction} className="space-y-3">
+              <div className="rounded-lg bg-surface-sunken p-3 text-sm text-ink-muted">
+                {shiftCashSales?._count.id ?? 0} transaksi tunai · Kas harapan: <strong className="text-ink">Rp {rupiah(expectedCash)}</strong>
+              </div>
               <div>
                 <label htmlFor="actual_cash" className="field-label">Uang kas akhir</label>
                 <input
@@ -109,19 +130,23 @@ export default async function KasirDashboardPage() {
             </form>
           ) : (
             <form action={startShiftAction} className="space-y-3">
-              <div>
-                <label htmlFor="opening_balance" className="field-label">Saldo pembukaan</label>
-                <input
-                  id="opening_balance"
-                  name="opening_balance"
-                  type="number"
-                  min="0"
-                  step="1"
-                  required
-                  className="field tabular"
-                  placeholder="Contoh: 200000"
-                />
-              </div>
+              {previousShift?.actual_cash == null ? (
+                <div>
+                  <label htmlFor="opening_balance" className="field-label">Saldo pembukaan</label>
+                  <input
+                    id="opening_balance"
+                    name="opening_balance"
+                    type="number"
+                    min="0"
+                    step="1"
+                    required
+                    className="field tabular"
+                    placeholder="Contoh: 200000"
+                  />
+                </div>
+              ) : (
+                <input type="hidden" name="opening_balance" value="" />
+              )}
               <button type="submit" className="btn btn-brand">
                 <Icon name="unlock" className="h-4 w-4" />
                 Buka shift

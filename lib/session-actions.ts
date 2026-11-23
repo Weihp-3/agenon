@@ -36,3 +36,14 @@ export async function loginAction(
 
   redirect("/dashboard");
 }
+
+/** Hanya menerima path relatif agar tidak jadi open redirect. */
+export async function googleSignInAction(formData: FormData): Promise<void> {
+  const requested = String(formData.get("callbackUrl") ?? "");
+  const callbackUrl =
+    requested.startsWith("/") && !requested.startsWith("//") && !requested.startsWith("/\\")
+      ? requested
+      : "/dashboard";
+
+  await signIn("google", { redirectTo: callbackUrl });
+}

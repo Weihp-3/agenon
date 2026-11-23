@@ -46,6 +46,9 @@ export async function checkoutAction(formData: FormData) {
   const shift = await db.shifts.findFirst({
     where: { kasir_id: BigInt((await requireRole("kasir")).id), closed_at: null },
   });
+  if (!shift) {
+    return redirect(flashPath("/kasir", "error", "Buka shift terlebih dahulu."));
+  }
 
   try {
     const transaction = await db.$transaction(async (tx) => {
@@ -164,17 +167,27 @@ export async function markPickedUpAction(id: string) {
 /** Open a cashier shift. */
 export async function startShiftAction(formData: FormData) {
   const user = await requireRole("kasir");
-  const opening_balance = Number(formData.get("opening_balance"));
-
-  if (!Number.isFinite(opening_balance) || opening_balance < 0) {
-    return redirect(flashPath("/kasir/dashboard", "error", "Saldo pembukaan harus angka >= 0."));
-  }
 
   const existing = await db.shifts.findFirst({
     where: { kasir_id: BigInt(user.id), closed_at: null },
   });
   if (existing) {
     return redirect(flashPath("/kasir/dashboard", "error", "Kamu sudah punya shift aktif. Tutup dulu."));
+  }
+
+  const previousShift = await db.shifts.findFirst({
+    where: { kasir_id: BigInt(user.id), closed_at: { not: null } },
+    orderBy: { closed_at: "desc" },
+    select: { actual_cash: true },
+  });
+  const requestedOpening = formData.get("opening_balance");
+  const opening_balance =
+    requestedOpening === null || String(requestedOpening).trim() === ""
+      ? Number(previousShift?.actual_cash ?? 0)
+      : Number(requestedOpening);
+
+  if (!Number.isFinite(opening_balance) || opening_balance < 0) {
+    return redirect(flashPath("/kasir/dashboard", "error", "Saldo pembukaan harus angka >= 0."));
   }
 
   await db.shifts.create({

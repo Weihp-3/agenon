@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Flash } from "@/components/flash";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { PasswordInput } from "@/components/password-input";
 
 export default function RegisterPage() {
@@ -69,7 +70,15 @@ export default function RegisterPage() {
 
       <Flash errors={error ? [error] : undefined} />
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <GoogleSignInButton callbackUrl="/dashboard" label="Daftar dengan Google" />
+
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-subtle">
+        <span className="h-px flex-1 bg-ink/10" />
+        atau pakai email
+        <span className="h-px flex-1 bg-ink/10" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="field-label">Nama lengkap</label>
           <input

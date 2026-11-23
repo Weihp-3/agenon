@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
@@ -13,15 +13,11 @@ export function RevenueChart({
   data: number[];
   chartCounts?: number[];
 }) {
-  const [chart, setChart] = useState<Chart | null>(null);
-
   useEffect(() => {
     if (!labels.length || typeof window === "undefined") return;
 
     const canvas = document.getElementById("salesChart") as HTMLCanvasElement | null;
     if (!canvas) return;
-
-    if (chart) chart.destroy();
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -86,8 +82,6 @@ export function RevenueChart({
         },
       },
     });
-
-    setChart(myChart);
 
     function applyTheme() {
       const scales = myChart.options.scales;

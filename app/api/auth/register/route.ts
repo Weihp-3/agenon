@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    if (session?.user) {
+      return NextResponse.json(
+        { error: "Kamu sudah masuk. Keluar dulu untuk daftar akun lain." },
+        { status: 409 },
+      );
+    }
+
     const formData = await request.formData();
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
@@ -21,7 +30,14 @@ export async function POST(request: Request) {
 
     const existing = await db.users.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.json({ error: "Email sudah terdaftar." }, { status: 409 });
+      return NextResponse.json(
+        {
+          error: existing.google_id
+            ? "Email ini terdaftar dengan Google. Silakan masuk dengan Google."
+            : "Email sudah terdaftar.",
+        },
+        { status: 409 },
+      );
     }
 
     await db.users.create({

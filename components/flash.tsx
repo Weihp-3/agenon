@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Icon } from "./icon";
 
 type FlashType = "success" | "error" | "warning" | "info";
+type Toast = { type: FlashType; message: string };
 
 const META: Record<FlashType, { icon: string; classes: string }> = {
   success: {
@@ -25,12 +26,43 @@ const META: Record<FlashType, { icon: string; classes: string }> = {
   },
 };
 
+function ToastCard({ toast }: { toast: Toast }) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  const meta = META[toast.type];
+
+  return (
+    <div
+      role={toast.type === "error" ? "alert" : "status"}
+      className={`fixed bottom-5 right-5 z-50 flex w-[min(24rem,calc(100vw-2.5rem))] items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg ${meta.classes}`}
+    >
+      <Icon name={meta.icon} className="mt-0.5 h-5 w-5 shrink-0" />
+      <span className="min-w-0 flex-1 leading-snug">{toast.message}</span>
+      <button
+        type="button"
+        onClick={() => setVisible(false)}
+        className="-mr-1 -mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-black/5"
+        aria-label="Tutup pesan"
+      >
+        <Icon name="close" className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 /**
  * Port of x-flash. The redirect carries ?flash=&msg=; the message is shown
  * once and the query is dropped so a refresh does not bring it back.
  */
 export function Flash({ errors }: { errors?: string[] }): React.ReactElement | null {
-  const [flash, setFlash] = useState<{ type: FlashType; message: string } | null>(null);
+  const [flash, setFlash] = useState<Toast | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -42,6 +74,7 @@ export function Flash({ errors }: { errors?: string[] }): React.ReactElement | n
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- consume URL flash once.
     setFlash({ type, message });
 
     params.delete("flash");
@@ -54,46 +87,25 @@ export function Flash({ errors }: { errors?: string[] }): React.ReactElement | n
     );
   }, []);
 
-  if (!flash && (!errors || errors.length === 0)) return null;
+  const toast: Toast | null =
+    flash ?? (errors && errors.length > 0 ? { type: "error", message: errors.join(" ") } : null);
 
-  const meta = flash ? META[flash.type] : null;
+  // A new occurrence (including the same message submitted again) must restart
+  // the 1.5s timer, so remount the card whenever the toast appears anew.
+  const signature = toast ? `${toast.type}:${toast.message}` : "";
+  const lastSignature = useRef("");
+  const occurrenceRef = useRef(0);
+  const [occurrence, setOccurrence] = useState(0);
 
-  return (
-    <>
-      {flash && meta ? (
-        <div
-          role="status"
-          className={`mb-4 flex items-start gap-3 rounded-lg border border-ink/10 px-4 py-3 text-sm ${meta.classes}`}
-        >
-          <Icon name={meta.icon} className="mt-0.5 h-5 w-5 shrink-0" />
-          <span className="min-w-0 flex-1">{flash.message}</span>
-          <button
-            type="button"
-            onClick={() => setFlash(null)}
-            className="-mr-1 -mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-black/5"
-            aria-label="Tutup pesan"
-          >
-            <Icon name="close" className="h-4 w-4" />
-          </button>
-        </div>
-      ) : null}
+  useEffect(() => {
+    if (signature !== lastSignature.current) {
+      lastSignature.current = signature;
+      occurrenceRef.current += 1;
+      setOccurrence(occurrenceRef.current);
+    }
+  }, [signature]);
 
-      {errors && errors.length > 0 ? (
-        <div
-          role="alert"
-          className="mb-4 flex items-start gap-3 rounded-lg border border-status-danger/25 bg-status-danger-soft px-4 py-3 text-sm text-status-danger-ink"
-        >
-          <Icon name="warning" className="mt-0.5 h-5 w-5 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold">Periksa kembali isian berikut</p>
-            <ul className="mt-1 list-disc space-y-0.5 pl-4">
-              {errors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-    </>
-  );
+  if (!toast) return null;
+
+  return <ToastCard key={`${signature}:${occurrence}`} toast={toast} />;
 }

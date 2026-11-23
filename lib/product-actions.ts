@@ -6,6 +6,7 @@ import { db } from "./db";
 import fs from "fs/promises";
 import path from "path";
 import { requireRole } from "./auth";
+import type { Prisma } from "@prisma/client";
 
 const PUBLIC_DIR = path.resolve("public");
 const PRODUCTS_STORAGE_DIR = path.join(PUBLIC_DIR, "storage", "products");
@@ -70,7 +71,7 @@ export async function storeProduct(formData: FormData) {
     imagePath = dbImagePath(fileName);
   }
 
-  const data: any = {
+  const data: Prisma.productsCreateInput = {
     name,
     price: priceNum,
     stock: stockNum,
@@ -146,7 +147,7 @@ export async function updateProduct(id: string, formData: FormData) {
     imagePath = dbImagePath(fileName);
   }
 
-  const data: any = {
+  const data: Prisma.productsUpdateInput = {
     name,
     price: priceNum,
     stock: stockNum,
