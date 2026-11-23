@@ -10,14 +10,12 @@ import { Flash } from "@/components/flash";
 export default async function PesananPage() {
   const user = await requireRole("user");
 
-  const orders = await db.transactions.findMany({
-    where: {
-      user_id: BigInt(user.id),
-      status: { in: ["menunggu", "siap"] },
-    },
-    orderBy: { created_at: "desc" },
-    include: { transaction_items: { include: { products: true } } },
-  });
+  const orders = await db.orm.public.transactions
+    .where({ user_id: BigInt(user.id) })
+    .where((t) => t.status.in(["menunggu", "siap"]))
+    .orderBy((t) => t.created_at.desc())
+    .include("transaction_items", (item) => item.include("products"))
+    .all();
 
   return (
     <div className="space-y-5">

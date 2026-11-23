@@ -7,12 +7,12 @@ import { rupiah, statusLabel, paymentLabel, formatDateTime } from "@/lib/format"
 export default async function KasirRiwayatPage() {
   const user = await requireRole("kasir");
 
-  const orders = await db.transactions.findMany({
-    where: { user_id: BigInt(user.id) },
-    orderBy: { created_at: "desc" },
-    take: 100,
-    include: { transaction_items: true },
-  });
+  const orders = await db.orm.public.transactions
+    .where({ user_id: BigInt(user.id) })
+    .orderBy((t) => t.created_at.desc())
+    .limit(100)
+    .include("transaction_items")
+    .all();
 
   const total = orders
     .filter((o) => o.status === "selesai")

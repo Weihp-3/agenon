@@ -30,15 +30,12 @@ export async function updateProfileAction(
     return { error: "Alamat email tidak valid." };
   }
 
-  const existing = await db.users.findUnique({ where: { email } });
+  const existing = await db.orm.public.users.where({ email }).first();
   if (existing && existing.id !== userId) {
     return { error: "Email sudah dipakai akun lain." };
   }
 
-  await db.users.update({
-    where: { id: userId },
-    data: { name, email },
-  });
+  await db.orm.public.users.where({ id: userId }).update({ name, email });
 
   revalidatePath("/profile");
   revalidatePath("/user/dashboard");

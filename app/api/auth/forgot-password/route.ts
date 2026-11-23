@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email wajib diisi." }, { status: 400 });
     }
 
-    const user = await db.users.findUnique({ where: { email } });
+    const user = await db.orm.public.users.where({ email }).first();
 
     // Always respond the same way so accounts cannot be enumerated.
     if (!user) {
@@ -21,10 +21,10 @@ export async function POST(request: Request) {
 
     const token = crypto.randomBytes(32).toString("hex");
 
-    await db.password_reset_tokens.upsert({
-      where: { email },
+    await db.orm.public.password_reset_tokens.upsert({
       create: { email, token, created_at: new Date() },
       update: { token, created_at: new Date() },
+      conflictOn: { email },
     });
 
     const origin =

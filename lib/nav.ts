@@ -59,13 +59,18 @@ export async function pendingCount(
   userId: string,
 ): Promise<number> {
   if (role === "kasir" || role === "admin") {
-    return db.transactions.count({ where: { status: "menunggu" } });
+    const { total } = await db.orm.public.transactions
+      .where({ status: "menunggu" })
+      .aggregate((agg) => ({ total: agg.count() }));
+    return total;
   }
 
   if (role === "user") {
-    return db.transactions.count({
-      where: { user_id: BigInt(userId), status: { in: ["menunggu", "siap"] } },
-    });
+    const { total } = await db.orm.public.transactions
+      .where({ user_id: BigInt(userId) })
+      .where((x) => x.status.in(["menunggu", "siap"]))
+      .aggregate((agg) => ({ total: agg.count() }));
+    return total;
   }
 
   return 0;

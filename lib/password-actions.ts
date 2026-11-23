@@ -31,10 +31,10 @@ export async function changePasswordAction(
     return { error: "Kata sandi baru harus berbeda dari kata sandi lama." };
   }
 
-  const user = await db.users.findUnique({
-    where: { id: BigInt(session.id) },
-    select: { password: true },
-  });
+  const user = await db.orm.public.users
+    .whereUnique({ id: BigInt(session.id) })
+    .select("password")
+    .first();
   if (!user) {
     return { error: "Akun tidak ditemukan." };
   }
@@ -44,10 +44,9 @@ export async function changePasswordAction(
     return { error: "Kata sandi lama salah." };
   }
 
-  await db.users.update({
-    where: { id: BigInt(session.id) },
-    data: { password: await bcrypt.hash(next, 12) },
-  });
+  await db.orm.public.users
+    .where({ id: BigInt(session.id) })
+    .update({ password: await bcrypt.hash(next, 12) });
 
   revalidatePath("/profile");
   return { message: "Kata sandi berhasil diubah." };

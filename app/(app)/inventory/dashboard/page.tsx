@@ -9,10 +9,10 @@ import { rupiah } from "@/lib/format";
 export default async function InventoryDashboardPage() {
   await requireRole("admin");
 
-  const products = await db.products.findMany({
-    where: { deleted_at: null },
-    orderBy: { stock: "asc" },
-  });
+  const products = await db.orm.public.products
+    .where({ deleted_at: null })
+    .orderBy((p) => p.stock.asc())
+    .all();
 
   const criticalCount = products.filter((p) => p.stock <= 5).length;
   const lowCount = products.filter((p) => p.stock > 5 && p.stock <= 10).length;

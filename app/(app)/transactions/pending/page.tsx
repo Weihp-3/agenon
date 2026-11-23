@@ -10,14 +10,12 @@ import { verifyAction, rejectAction } from "@/lib/transaction-admin-actions";
 export default async function PendingTransactionsPage() {
   await requireRole("admin");
 
-  const orders = await db.transactions.findMany({
-    where: { status: "pending" },
-    orderBy: { created_at: "asc" },
-    include: {
-      users: { select: { name: true, email: true } },
-      transaction_items: { include: { products: true } },
-    },
-  });
+  const orders = await db.orm.public.transactions
+    .where({ status: "pending" })
+    .orderBy((t) => t.created_at.asc())
+    .include("users", (u) => u.select("name", "email"))
+    .include("transaction_items", (item) => item.include("products"))
+    .all();
 
   return (
     <div className="space-y-5">
@@ -47,7 +45,7 @@ export default async function PendingTransactionsPage() {
                 <div>
                   <p className="text-sm font-bold text-ink">Pesanan #{order.id}</p>
                   <p className="mt-0.5 text-xs text-ink-muted">
-                    {order.users.name} · {order.users.email}
+                    {order.users?.name ?? "-"} · {order.users?.email ?? "-"}
                   </p>
                   <p className="mt-0.5 text-xs text-ink-muted">
                     {formatDateTime(order.created_at)} · {paymentLabel(order.payment_method)}

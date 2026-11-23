@@ -7,11 +7,12 @@ import { rupiah, shiftStatusLabel, formatDateTime } from "@/lib/format";
 export default async function ShiftHistoryPage() {
   const user = await requireRole("kasir");
 
-  const shifts = await db.shifts.findMany({
-    where: { kasir_id: BigInt(user.id), closed_at: { not: null } },
-    orderBy: { opened_at: "desc" },
-    take: 100,
-  });
+  const shifts = await db.orm.public.shifts
+    .where({ kasir_id: BigInt(user.id) })
+    .where((s) => s.closed_at.neq(null))
+    .orderBy((s) => s.opened_at.desc())
+    .limit(100)
+    .all();
 
   return (
     <div className="space-y-5">

@@ -14,10 +14,10 @@ export default async function TransactionReceiptPage({
   const user = await requireUser();
   const { id } = await params;
 
-  const transaction = await db.transactions.findUnique({
-    where: { id: BigInt(id) },
-    include: { transaction_items: { include: { products: true } } },
-  });
+  const transaction = await db.orm.public.transactions
+    .whereUnique({ id: BigInt(id) })
+    .include("transaction_items", (item) => item.include("products"))
+    .first();
 
   if (!transaction || transaction.user_id !== BigInt(user.id)) notFound();
 

@@ -15,18 +15,29 @@ export default async function AdminDashboardPage() {
   today.setHours(0, 0, 0, 0);
 
   const [todaySales, todayCount, pending, lowStock, recent] = await Promise.all([
-    db.transactions.aggregate({
-      where: { status: "selesai", created_at: { gte: today } },
-      _sum: { total_price: true },
-    }),
-    db.transactions.count({ where: { status: "selesai", created_at: { gte: today } } }),
-    db.transactions.count({ where: { status: "menunggu" } }),
-    db.products.count({ where: { stock: { lte: 10 }, deleted_at: null } }),
-    db.transactions.findMany({
-      orderBy: { created_at: "desc" },
-      take: 6,
-      include: { users: { select: { name: true } } },
-    }),
+    db.orm.public.transactions
+      .where({ status: "selesai" })
+      .where((t) => t.created_at.gte(today))
+      .aggregate((agg) => ({ total: agg.sum("total_price") })),
+    db.orm.public.transactions
+      .where({ status: "selesai" })
+      .where((t) => t.created_at.gte(today))
+      .aggregate((agg) => ({ total: agg.count() }))
+      .then((r) => r.total),
+    db.orm.public.transactions
+      .where({ status: "menunggu" })
+      .aggregate((agg) => ({ total: agg.count() }))
+      .then((r) => r.total),
+    db.orm.public.products
+      .where({ deleted_at: null })
+      .where((p) => p.stock.lte(10))
+      .aggregate((agg) => ({ total: agg.count() }))
+      .then((r) => r.total),
+    db.orm.public.transactions
+      .orderBy((t) => t.created_at.desc())
+      .limit(6)
+      .include("users", (u) => u.select("name"))
+      .all(),
   ]);
 
   return (
@@ -43,7 +54,7 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat
           label="Penjualan hari ini"
-          value={`Rp ${rupiah(todaySales._sum.total_price ?? 0)}`}
+          value={`Rp ${rupiah(todaySales.total ?? 0)}`}
           note={`${todayCount} transaksi selesai`}
           tone="brand"
           icon="chart"
@@ -71,7 +82,7 @@ export default async function AdminDashboardPage() {
                 <li key={order.id} className="flex items-center justify-between gap-3 py-2.5">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-ink">
-                      #{order.id} · {order.users.name}
+                      #{order.id} · {order.users?.name ?? "-"}
                     </p>
                     <p className="text-xs text-ink-muted">{formatDateTime(order.created_at)}</p>
                   </div>

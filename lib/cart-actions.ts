@@ -21,7 +21,9 @@ export async function addToCart(
     return json(false, { error: "Jumlah tidak valid." });
   }
 
-  const product = await db.products.findUnique({ where: { id: BigInt(productId) } });
+  const product = await db.orm.public.products
+    .whereUnique({ id: BigInt(productId) })
+    .first();
   if (!product) {
     return json(false, { error: "Produk tidak ditemukan." });
   }

@@ -9,15 +9,12 @@ export async function verifyAction(id: string): Promise<void> {
   await requireRole("admin", "kasir");
   const txId = BigInt(id);
 
-  const transaction = await db.transactions.findUnique({ where: { id: txId } });
+  const transaction = await db.orm.public.transactions.whereUnique({ id: txId }).first();
   if (!transaction) {
     return redirect("/transactions/pending?flash=error&msg=Transaksi+tidak+ditemukan.");
   }
 
-  await db.transactions.update({
-    where: { id: txId },
-    data: { status: "selesai" },
-  });
+  await db.orm.public.transactions.where({ id: txId }).update({ status: "selesai" });
 
   return redirect("/transactions/pending?flash=success&msg=Transaksi+berhasil+diverifikasi.");
 }
@@ -27,10 +24,10 @@ export async function rejectAction(id: string): Promise<void> {
   await requireRole("admin", "kasir");
   const txId = BigInt(id);
 
-  const transaction = await db.transactions.findUnique({
-    where: { id: txId },
-    include: { transaction_items: true },
-  });
+  const transaction = await db.orm.public.transactions
+    .whereUnique({ id: txId })
+    .include("transaction_items")
+    .first();
 
   if (!transaction) {
     return redirect("/transactions/pending?flash=error&msg=Transaksi+tidak+ditemukan.");
@@ -39,29 +36,25 @@ export async function rejectAction(id: string): Promise<void> {
     return redirect("/transactions/pending?flash=error&msg=Transaksi+sudah+dibatalkan.");
   }
 
-  await db.$transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     for (const item of transaction.transaction_items) {
-      await tx.products.update({
-        where: { id: item.product_id },
-        data: { stock: { increment: item.quantity } },
-      });
+      await tx.execute(
+        tx.raw.sql`UPDATE "products" SET stock = stock + ${item.quantity} WHERE id = ${Number(item.product_id)}`
+          .affectedCount()
+          .build(),
+      );
     }
 
-    await tx.transactions.update({
-      where: { id: txId },
-      data: { status: "batal" },
-    });
+    await tx.orm.public.transactions.where({ id: txId }).update({ status: "batal" });
 
-    await tx.notifications.create({
-      data: {
-        user_id: transaction.user_id,
-        title: `Pembayaran Ditolak #${transaction.id}`,
-        message: "Pembayaranmu ditolak. Stok sudah dikembalikan.",
-        type: "error",
-        category: "purchase",
-        icon: "fa-xmark",
-        data: { transaction_id: String(transaction.id) },
-      },
+    await tx.orm.public.notifications.create({
+      user_id: transaction.user_id,
+      title: `Pembayaran Ditolak #${transaction.id}`,
+      message: "Pembayaranmu ditolak. Stok sudah dikembalikan.",
+      type: "error",
+      category: "purchase",
+      icon: "fa-xmark",
+      data: { transaction_id: String(transaction.id) },
     });
   });
 

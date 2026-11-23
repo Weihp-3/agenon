@@ -24,18 +24,16 @@ export async function storeKasir(formData: FormData): Promise<void> {
     return redirect("/kasir-akun/create?flash=error&msg=Password+minimal+8+karakter.");
   }
 
-  const existing = await db.users.findUnique({ where: { email } });
+  const existing = await db.orm.public.users.where({ email }).first();
   if (existing) {
     return redirect("/kasir-akun/create?flash=error&msg=Email+sudah+terdaftar.");
   }
 
-  await db.users.create({
-    data: {
-      name,
-      email,
-      password: await bcrypt.hash(password, 12),
-      role: "kasir",
-    },
+  await db.orm.public.users.create({
+    name,
+    email,
+    password: await bcrypt.hash(password, 12),
+    role: "kasir",
   });
 
   return redirect("/kasir-akun?flash=success&msg=Kasir+berhasil+ditambahkan.");
@@ -45,12 +43,12 @@ export async function storeKasir(formData: FormData): Promise<void> {
 export async function destroyKasir(kasirId: string): Promise<void> {
   await requireRole("admin");
 
-  const user = await db.users.findUnique({ where: { id: BigInt(kasirId) } });
+  const user = await db.orm.public.users.whereUnique({ id: BigInt(kasirId) }).first();
   if (!user || user.role !== "kasir") {
     return redirect("/kasir-akun?flash=error&msg=Kasir+tidak+ditemukan.");
   }
 
-  await db.users.delete({ where: { id: BigInt(kasirId) } });
+  await db.orm.public.users.where({ id: BigInt(kasirId) }).delete();
 
   return redirect("/kasir-akun?flash=success&msg=Kasir+berhasil+dihapus.");
 }

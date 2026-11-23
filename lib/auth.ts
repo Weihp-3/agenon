@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { forbidden, redirect } from "next/navigation";
+import { or } from "@prisma/orm-postgres/orm-client";
 
 import { db } from "./db";
 
@@ -38,7 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!email || !password) return null;
 
-        const user = await db.users.findUnique({ where: { email } });
+        const user = await db.orm.public.users.where({ email }).first();
         if (!user || !user.password) return null;
 
         const matches = await bcrypt.compare(password, user.password);
@@ -68,29 +69,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!email) return token;
 
         const googleId = String((profile as { sub?: string } | undefined)?.sub ?? "");
-        let dbUser = await db.users.findFirst({
-          where: googleId
-            ? { OR: [{ email }, { google_id: googleId }] }
-            : { email },
-        });
+        let dbUser = await db.orm.public.users
+          .where((u) =>
+            googleId ? or(u.email.eq(email), u.google_id.eq(googleId)) : u.email.eq(email),
+          )
+          .first();
 
         if (!dbUser) {
-          dbUser = await db.users.create({
-            data: {
-              name: user.name ?? email.split("@")[0],
-              email,
-              google_id: googleId || null,
-              avatar: user.image ?? null,
-              password: randomBytes(32).toString("hex"),
-              role: "user",
-            },
+          dbUser = await db.orm.public.users.create({
+            name: user.name ?? email.split("@")[0],
+            email,
+            google_id: googleId || null,
+            avatar: user.image ?? null,
+            password: randomBytes(32).toString("hex"),
+            role: "user",
           });
         } else if (googleId && dbUser.google_id !== googleId) {
-          dbUser = await db.users.update({
-            where: { id: dbUser.id },
-            data: { google_id: googleId },
-          });
+          dbUser = await db.orm.public.users
+            .where({ id: dbUser.id })
+            .update({ google_id: googleId });
         }
+
+        if (!dbUser) return token;
 
         token.id = String(dbUser.id);
         token.role = dbUser.role;

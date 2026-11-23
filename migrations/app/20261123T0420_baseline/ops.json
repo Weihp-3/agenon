@@ -1,0 +1,4129 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.inventory_adjustments_reason",
+    "label": "Create enum type \"inventory_adjustments_reason\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "inventory_adjustments_reason"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"inventory_adjustments_reason\"",
+        "sql": "CREATE TYPE \"public\".\"inventory_adjustments_reason\" AS ENUM ('stok_opname', 'damage', 'waste', 'manual_correction')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.notifications_category",
+    "label": "Create enum type \"notifications_category\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "notifications_category"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"notifications_category\"",
+        "sql": "CREATE TYPE \"public\".\"notifications_category\" AS ENUM ('purchase', 'product', 'promotion', 'system', 'inventory', 'shift')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.notifications_type",
+    "label": "Create enum type \"notifications_type\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "notifications_type"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"notifications_type\"",
+        "sql": "CREATE TYPE \"public\".\"notifications_type\" AS ENUM ('info', 'success', 'warning', 'error')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.offline_queue_status",
+    "label": "Create enum type \"offline_queue_status\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "offline_queue_status"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"offline_queue_status\"",
+        "sql": "CREATE TYPE \"public\".\"offline_queue_status\" AS ENUM ('pending', 'synced', 'failed')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.refunds_status",
+    "label": "Create enum type \"refunds_status\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "refunds_status"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"refunds_status\"",
+        "sql": "CREATE TYPE \"public\".\"refunds_status\" AS ENUM ('pending', 'approved', 'rejected')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.shifts_status",
+    "label": "Create enum type \"shifts_status\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "shifts_status"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"shifts_status\"",
+        "sql": "CREATE TYPE \"public\".\"shifts_status\" AS ENUM ('open', 'closed', 'verified')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.transactions_payment_method",
+    "label": "Create enum type \"transactions_payment_method\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "transactions_payment_method"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"transactions_payment_method\"",
+        "sql": "CREATE TYPE \"public\".\"transactions_payment_method\" AS ENUM ('saldo', 'qris', 'cash', 'transfer')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "createNativeEnumType.transactions_status",
+    "label": "Create enum type \"transactions_status\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "type",
+        "name": "transactions_status"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "create enum type \"transactions_status\"",
+        "sql": "CREATE TYPE \"public\".\"transactions_status\" AS ENUM ('pending', 'selesai', 'batal', 'menunggu', 'siap')",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.audit_logs",
+    "label": "Create table \"audit_logs\"",
+    "summary": "Creates table \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"audit_logs\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"audit_logs\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"audit_logs\"",
+        "sql": "CREATE TABLE \"public\".\"audit_logs\" (\n  \"action\" character varying(255) NOT NULL,\n  \"after_values\" jsonb,\n  \"before_values\" jsonb,\n  \"created_at\" timestamp(0),\n  \"description\" text,\n  \"id\" BIGSERIAL NOT NULL,\n  \"ip_address\" character varying(45),\n  \"model_id\" int8 NOT NULL,\n  \"model_type\" character varying(255) NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"user_id\" int8,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"audit_logs\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"audit_logs\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.cache",
+    "label": "Create table \"cache\"",
+    "summary": "Creates table \"cache\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "cache"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"cache\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"cache\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"cache\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"cache\"",
+        "sql": "CREATE TABLE \"public\".\"cache\" (\n  \"expiration\" int4 NOT NULL,\n  \"key\" character varying(255) NOT NULL,\n  \"value\" text NOT NULL,\n  PRIMARY KEY (\"key\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"cache\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"cache\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"cache\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.cache_locks",
+    "label": "Create table \"cache_locks\"",
+    "summary": "Creates table \"cache_locks\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "cache_locks"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"cache_locks\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"cache_locks\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"cache_locks\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"cache_locks\"",
+        "sql": "CREATE TABLE \"public\".\"cache_locks\" (\n  \"expiration\" int4 NOT NULL,\n  \"key\" character varying(255) NOT NULL,\n  \"owner\" character varying(255) NOT NULL,\n  PRIMARY KEY (\"key\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"cache_locks\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"cache_locks\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"cache_locks\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.failed_jobs",
+    "label": "Create table \"failed_jobs\"",
+    "summary": "Creates table \"failed_jobs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "failed_jobs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"failed_jobs\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"failed_jobs\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"failed_jobs\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"failed_jobs\"",
+        "sql": "CREATE TABLE \"public\".\"failed_jobs\" (\n  \"connection\" text NOT NULL,\n  \"exception\" text NOT NULL,\n  \"failed_at\" timestamp(0) DEFAULT (now()) NOT NULL,\n  \"id\" BIGSERIAL NOT NULL,\n  \"payload\" text NOT NULL,\n  \"queue\" text NOT NULL,\n  \"uuid\" character varying(255) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"failed_jobs\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"failed_jobs\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"failed_jobs\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.inventory_adjustments",
+    "label": "Create table \"inventory_adjustments\"",
+    "summary": "Creates table \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"inventory_adjustments\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"inventory_adjustments\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"inventory_adjustments\"",
+        "sql": "CREATE TABLE \"public\".\"inventory_adjustments\" (\n  \"created_at\" timestamp(0),\n  \"difference\" int4 NOT NULL,\n  \"id\" BIGSERIAL NOT NULL,\n  \"notes\" text,\n  \"product_id\" int8 NOT NULL,\n  \"quantity_after\" int4 NOT NULL,\n  \"quantity_before\" int4 NOT NULL,\n  \"reason\" \"inventory_adjustments_reason\" NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"verified_at\" timestamp(0),\n  \"verified_by\" int8,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"inventory_adjustments\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"inventory_adjustments\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.inventory_alerts",
+    "label": "Create table \"inventory_alerts\"",
+    "summary": "Creates table \"inventory_alerts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "inventory_alerts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"inventory_alerts\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"inventory_alerts\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"inventory_alerts\"",
+        "sql": "CREATE TABLE \"public\".\"inventory_alerts\" (\n  \"created_at\" timestamp(0),\n  \"critical_threshold\" int4 DEFAULT 5 NOT NULL,\n  \"id\" BIGSERIAL NOT NULL,\n  \"is_active\" bool DEFAULT true NOT NULL,\n  \"last_alert_sent_at\" timestamp(0),\n  \"low_stock_threshold\" int4 DEFAULT 10 NOT NULL,\n  \"product_id\" int8 NOT NULL,\n  \"reorder_quantity\" int4 DEFAULT 20 NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"inventory_alerts\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"inventory_alerts\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.job_batches",
+    "label": "Create table \"job_batches\"",
+    "summary": "Creates table \"job_batches\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "job_batches"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"job_batches\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"job_batches\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"job_batches\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"job_batches\"",
+        "sql": "CREATE TABLE \"public\".\"job_batches\" (\n  \"cancelled_at\" int4,\n  \"created_at\" int4 NOT NULL,\n  \"failed_job_ids\" text NOT NULL,\n  \"failed_jobs\" int4 NOT NULL,\n  \"finished_at\" int4,\n  \"id\" character varying(255) NOT NULL,\n  \"name\" character varying(255) NOT NULL,\n  \"options\" text,\n  \"pending_jobs\" int4 NOT NULL,\n  \"total_jobs\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"job_batches\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"job_batches\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"job_batches\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.jobs",
+    "label": "Create table \"jobs\"",
+    "summary": "Creates table \"jobs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "jobs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"jobs\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobs\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"jobs\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"jobs\"",
+        "sql": "CREATE TABLE \"public\".\"jobs\" (\n  \"attempts\" int4 NOT NULL,\n  \"available_at\" int4 NOT NULL,\n  \"created_at\" int4 NOT NULL,\n  \"id\" BIGSERIAL NOT NULL,\n  \"payload\" text NOT NULL,\n  \"queue\" character varying(255) NOT NULL,\n  \"reserved_at\" int4,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"jobs\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"jobs\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"jobs\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.migrations",
+    "label": "Create table \"migrations\"",
+    "summary": "Creates table \"migrations\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "migrations"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"migrations\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"migrations\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"migrations\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"migrations\"",
+        "sql": "CREATE TABLE \"public\".\"migrations\" (\n  \"batch\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"migration\" character varying(255) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"migrations\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"migrations\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"migrations\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.notifications",
+    "label": "Create table \"notifications\"",
+    "summary": "Creates table \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"notifications\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"notifications\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"notifications\"",
+        "sql": "CREATE TABLE \"public\".\"notifications\" (\n  \"category\" \"notifications_category\" DEFAULT 'system'::\"notifications_category\" NOT NULL,\n  \"created_at\" timestamp(0),\n  \"data\" jsonb,\n  \"icon\" character varying(255),\n  \"id\" BIGSERIAL NOT NULL,\n  \"is_pinned\" bool DEFAULT false NOT NULL,\n  \"message\" text NOT NULL,\n  \"read_at\" timestamp(0),\n  \"title\" character varying(255) NOT NULL,\n  \"type\" \"notifications_type\" DEFAULT 'info'::\"notifications_type\" NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"user_id\" int8 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"notifications\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"notifications\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"notifications\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.offline_queue",
+    "label": "Create table \"offline_queue\"",
+    "summary": "Creates table \"offline_queue\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "offline_queue"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"offline_queue\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"offline_queue\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"offline_queue\"",
+        "sql": "CREATE TABLE \"public\".\"offline_queue\" (\n  \"created_at\" timestamp(0),\n  \"error_message\" text,\n  \"id\" BIGSERIAL NOT NULL,\n  \"kasir_id\" int8 NOT NULL,\n  \"retry_count\" int4 DEFAULT 0 NOT NULL,\n  \"status\" \"offline_queue_status\" DEFAULT 'pending'::\"offline_queue_status\" NOT NULL,\n  \"synced_at\" timestamp(0),\n  \"transaction_data\" jsonb NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"offline_queue\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"offline_queue\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.password_reset_tokens",
+    "label": "Create table \"password_reset_tokens\"",
+    "summary": "Creates table \"password_reset_tokens\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "password_reset_tokens"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"password_reset_tokens\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset_tokens\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"password_reset_tokens\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"password_reset_tokens\"",
+        "sql": "CREATE TABLE \"public\".\"password_reset_tokens\" (\n  \"created_at\" timestamp(0),\n  \"email\" character varying(255) NOT NULL,\n  \"token\" character varying(255) NOT NULL,\n  PRIMARY KEY (\"email\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"password_reset_tokens\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset_tokens\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"password_reset_tokens\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.products",
+    "label": "Create table \"products\"",
+    "summary": "Creates table \"products\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "products"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"products\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"products\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"products\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"products\"",
+        "sql": "CREATE TABLE \"public\".\"products\" (\n  \"category\" character varying(255),\n  \"created_at\" timestamp(0),\n  \"deleted_at\" timestamp(0),\n  \"id\" BIGSERIAL NOT NULL,\n  \"image\" character varying(255),\n  \"name\" character varying(255) NOT NULL,\n  \"price\" int4 NOT NULL,\n  \"stock\" int4 DEFAULT 0 NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"products\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"products\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"products\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.refunds",
+    "label": "Create table \"refunds\"",
+    "summary": "Creates table \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"refunds\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refunds\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"refunds\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"refunds\"",
+        "sql": "CREATE TABLE \"public\".\"refunds\" (\n  \"amount\" numeric(10,2) NOT NULL,\n  \"approved_at\" timestamp(0),\n  \"approved_by\" int8,\n  \"created_at\" timestamp(0),\n  \"id\" BIGSERIAL NOT NULL,\n  \"reason\" text NOT NULL,\n  \"requested_by\" int8 NOT NULL,\n  \"status\" \"refunds_status\" DEFAULT 'pending'::\"refunds_status\" NOT NULL,\n  \"transaction_id\" int8 NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"refunds\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"refunds\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"refunds\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.sale_template_items",
+    "label": "Create table \"sale_template_items\"",
+    "summary": "Creates table \"sale_template_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "sale_template_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"sale_template_items\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"sale_template_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"sale_template_items\"",
+        "sql": "CREATE TABLE \"public\".\"sale_template_items\" (\n  \"created_at\" timestamp(0),\n  \"id\" BIGSERIAL NOT NULL,\n  \"product_id\" int8 NOT NULL,\n  \"quantity\" int4 DEFAULT 1 NOT NULL,\n  \"template_id\" int8 NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"sale_template_items\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"sale_template_items\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.sale_templates",
+    "label": "Create table \"sale_templates\"",
+    "summary": "Creates table \"sale_templates\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "sale_templates"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"sale_templates\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"sale_templates\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"sale_templates\"",
+        "sql": "CREATE TABLE \"public\".\"sale_templates\" (\n  \"created_at\" timestamp(0),\n  \"description\" text,\n  \"id\" BIGSERIAL NOT NULL,\n  \"is_active\" bool DEFAULT true NOT NULL,\n  \"kasir_id\" int8 NOT NULL,\n  \"name\" character varying(255) NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"usage_count\" int4 DEFAULT 0 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"sale_templates\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"sale_templates\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.sessions",
+    "label": "Create table \"sessions\"",
+    "summary": "Creates table \"sessions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "sessions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"sessions\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sessions\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"sessions\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"sessions\"",
+        "sql": "CREATE TABLE \"public\".\"sessions\" (\n  \"id\" character varying(255) NOT NULL,\n  \"ip_address\" character varying(45),\n  \"last_activity\" int4 NOT NULL,\n  \"payload\" text NOT NULL,\n  \"user_agent\" text,\n  \"user_id\" int8,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"sessions\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"sessions\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"sessions\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.shifts",
+    "label": "Create table \"shifts\"",
+    "summary": "Creates table \"shifts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "shifts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"shifts\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"shifts\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"shifts\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"shifts\"",
+        "sql": "CREATE TABLE \"public\".\"shifts\" (\n  \"actual_cash\" numeric(10,2),\n  \"closed_at\" timestamp(0),\n  \"closing_balance\" numeric(10,2),\n  \"created_at\" timestamp(0),\n  \"discrepancy\" numeric(10,2),\n  \"expected_cash\" numeric(10,2),\n  \"id\" BIGSERIAL NOT NULL,\n  \"kasir_id\" int8 NOT NULL,\n  \"notes\" text,\n  \"opened_at\" timestamp(0) NOT NULL,\n  \"opening_balance\" numeric(10,2) DEFAULT '0.00'::numeric(10,2) NOT NULL,\n  \"status\" \"shifts_status\" DEFAULT 'open'::\"shifts_status\" NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"shifts\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"shifts\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"shifts\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.topups",
+    "label": "Create table \"topups\"",
+    "summary": "Creates table \"topups\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "topups"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"topups\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"topups\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"topups\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"topups\"",
+        "sql": "CREATE TABLE \"public\".\"topups\" (\n  \"amount\" int4 NOT NULL,\n  \"created_at\" timestamp(0),\n  \"id\" BIGSERIAL NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"user_id\" int8 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"topups\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"topups\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"topups\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.transaction_items",
+    "label": "Create table \"transaction_items\"",
+    "summary": "Creates table \"transaction_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "transaction_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"transaction_items\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"transaction_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"transaction_items\"",
+        "sql": "CREATE TABLE \"public\".\"transaction_items\" (\n  \"created_at\" timestamp(0),\n  \"id\" BIGSERIAL NOT NULL,\n  \"price\" int4 NOT NULL,\n  \"product_id\" int8 NOT NULL,\n  \"quantity\" int4 NOT NULL,\n  \"subtotal\" int4 NOT NULL,\n  \"transaction_id\" int8 NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"transaction_items\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"transaction_items\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.transactions",
+    "label": "Create table \"transactions\"",
+    "summary": "Creates table \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"transactions\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transactions\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"transactions\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"transactions\"",
+        "sql": "CREATE TABLE \"public\".\"transactions\" (\n  \"created_at\" timestamp(0),\n  \"customer_name\" character varying(255),\n  \"id\" BIGSERIAL NOT NULL,\n  \"notified_at\" timestamp(0),\n  \"payment_method\" \"transactions_payment_method\" DEFAULT 'saldo'::\"transactions_payment_method\" NOT NULL,\n  \"picked_up_at\" timestamp(0),\n  \"pickup_code\" character varying(8),\n  \"ready_at\" timestamp(0),\n  \"shift_id\" int8,\n  \"status\" \"transactions_status\" DEFAULT 'selesai'::\"transactions_status\" NOT NULL,\n  \"total_price\" int4 NOT NULL,\n  \"updated_at\" timestamp(0),\n  \"user_id\" int8 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"transactions\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"transactions\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"transactions\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.users",
+    "label": "Create table \"users\"",
+    "summary": "Creates table \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"users\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"users\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"users\"",
+        "sql": "CREATE TABLE \"public\".\"users\" (\n  \"avatar\" character varying(255),\n  \"created_at\" timestamp(0),\n  \"email\" character varying(255) NOT NULL,\n  \"email_verified_at\" timestamp(0),\n  \"google_id\" character varying(255),\n  \"id\" BIGSERIAL NOT NULL,\n  \"name\" character varying(255) NOT NULL,\n  \"password\" character varying(255) NOT NULL,\n  \"remember_token\" character varying(100),\n  \"role\" character varying(255) DEFAULT 'user' NOT NULL,\n  \"updated_at\" timestamp(0),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"users\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"users\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"users\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_model_type_model_id_index",
+    "label": "Create index \"audit_logs_model_type_model_id_index\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_model_type_model_id_index",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_model_type_model_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_model_type_model_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"audit_logs_model_type_model_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_model_type_model_id_index\"",
+        "sql": "CREATE INDEX \"audit_logs_model_type_model_id_index\" ON \"public\".\"audit_logs\" (\"model_type\", \"model_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_model_type_model_id_index\" exists on \"audit_logs\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_model_type_model_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"audit_logs\"",
+          "btree",
+          "[\"model_type\",\"model_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.audit_logs.audit_logs_user_id_created_at_index",
+    "label": "Create index \"audit_logs_user_id_created_at_index\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "audit_logs_user_id_created_at_index",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"audit_logs_user_id_created_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_user_id_created_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"audit_logs_user_id_created_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"audit_logs_user_id_created_at_index\"",
+        "sql": "CREATE INDEX \"audit_logs_user_id_created_at_index\" ON \"public\".\"audit_logs\" (\"user_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"audit_logs_user_id_created_at_index\" exists on \"audit_logs\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"audit_logs_user_id_created_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"audit_logs\"",
+          "btree",
+          "[\"user_id\",\"created_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.failed_jobs.failed_jobs_uuid_unique",
+    "label": "Create index \"failed_jobs_uuid_unique\" on \"failed_jobs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "failed_jobs_uuid_unique",
+        "table": "failed_jobs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"failed_jobs_uuid_unique\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"failed_jobs_uuid_unique\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"failed_jobs_uuid_unique\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"failed_jobs_uuid_unique\"",
+        "sql": "CREATE UNIQUE INDEX \"failed_jobs_uuid_unique\" ON \"public\".\"failed_jobs\" (\"uuid\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"failed_jobs_uuid_unique\" exists on \"failed_jobs\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"failed_jobs_uuid_unique\"",
+          "i",
+          "I",
+          "\"public\".\"failed_jobs\"",
+          "btree",
+          "[\"uuid\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.inventory_adjustments.inventory_adjustments_created_at_index",
+    "label": "Create index \"inventory_adjustments_created_at_index\" on \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "inventory_adjustments_created_at_index",
+        "table": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"inventory_adjustments_created_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_created_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"inventory_adjustments_created_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"inventory_adjustments_created_at_index\"",
+        "sql": "CREATE INDEX \"inventory_adjustments_created_at_index\" ON \"public\".\"inventory_adjustments\" (\"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"inventory_adjustments_created_at_index\" exists on \"inventory_adjustments\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_created_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"inventory_adjustments\"",
+          "btree",
+          "[\"created_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.inventory_adjustments.inventory_adjustments_product_id_reason_index",
+    "label": "Create index \"inventory_adjustments_product_id_reason_index\" on \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "inventory_adjustments_product_id_reason_index",
+        "table": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"inventory_adjustments_product_id_reason_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_product_id_reason_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"inventory_adjustments_product_id_reason_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"inventory_adjustments_product_id_reason_index\"",
+        "sql": "CREATE INDEX \"inventory_adjustments_product_id_reason_index\" ON \"public\".\"inventory_adjustments\" (\"product_id\", \"reason\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"inventory_adjustments_product_id_reason_index\" exists on \"inventory_adjustments\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_product_id_reason_index\"",
+          "i",
+          "I",
+          "\"public\".\"inventory_adjustments\"",
+          "btree",
+          "[\"product_id\",\"reason\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.inventory_adjustments.inventory_adjustments_verified_by_idx",
+    "label": "Create index \"inventory_adjustments_verified_by_idx\" on \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "inventory_adjustments_verified_by_idx",
+        "table": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"inventory_adjustments_verified_by_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_verified_by_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"inventory_adjustments_verified_by_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"inventory_adjustments_verified_by_idx\"",
+        "sql": "CREATE INDEX \"inventory_adjustments_verified_by_idx\" ON \"public\".\"inventory_adjustments\" (\"verified_by\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"inventory_adjustments_verified_by_idx\" exists on \"inventory_adjustments\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_adjustments_verified_by_idx\"",
+          "i",
+          "I",
+          "\"public\".\"inventory_adjustments\"",
+          "btree",
+          "[\"verified_by\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.inventory_alerts.inventory_alerts_is_active_index",
+    "label": "Create index \"inventory_alerts_is_active_index\" on \"inventory_alerts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "inventory_alerts_is_active_index",
+        "table": "inventory_alerts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"inventory_alerts_is_active_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts_is_active_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"inventory_alerts_is_active_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"inventory_alerts_is_active_index\"",
+        "sql": "CREATE INDEX \"inventory_alerts_is_active_index\" ON \"public\".\"inventory_alerts\" (\"is_active\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"inventory_alerts_is_active_index\" exists on \"inventory_alerts\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts_is_active_index\"",
+          "i",
+          "I",
+          "\"public\".\"inventory_alerts\"",
+          "btree",
+          "[\"is_active\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.inventory_alerts.inventory_alerts_product_id_unique",
+    "label": "Create index \"inventory_alerts_product_id_unique\" on \"inventory_alerts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "inventory_alerts_product_id_unique",
+        "table": "inventory_alerts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"inventory_alerts_product_id_unique\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts_product_id_unique\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"inventory_alerts_product_id_unique\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"inventory_alerts_product_id_unique\"",
+        "sql": "CREATE UNIQUE INDEX \"inventory_alerts_product_id_unique\" ON \"public\".\"inventory_alerts\" (\"product_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"inventory_alerts_product_id_unique\" exists on \"inventory_alerts\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"inventory_alerts_product_id_unique\"",
+          "i",
+          "I",
+          "\"public\".\"inventory_alerts\"",
+          "btree",
+          "[\"product_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.jobs.jobs_queue_index",
+    "label": "Create index \"jobs_queue_index\" on \"jobs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "jobs_queue_index",
+        "table": "jobs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"jobs_queue_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"jobs_queue_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"jobs_queue_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"jobs_queue_index\"",
+        "sql": "CREATE INDEX \"jobs_queue_index\" ON \"public\".\"jobs\" (\"queue\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"jobs_queue_index\" exists on \"jobs\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"jobs_queue_index\"",
+          "i",
+          "I",
+          "\"public\".\"jobs\"",
+          "btree",
+          "[\"queue\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_category_index",
+    "label": "Create index \"notifications_category_index\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_category_index",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_category_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_category_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"notifications_category_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_category_index\"",
+        "sql": "CREATE INDEX \"notifications_category_index\" ON \"public\".\"notifications\" (\"category\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_category_index\" exists on \"notifications\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_category_index\"",
+          "i",
+          "I",
+          "\"public\".\"notifications\"",
+          "btree",
+          "[\"category\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_read_at_index",
+    "label": "Create index \"notifications_read_at_index\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_read_at_index",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_read_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_read_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"notifications_read_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_read_at_index\"",
+        "sql": "CREATE INDEX \"notifications_read_at_index\" ON \"public\".\"notifications\" (\"read_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_read_at_index\" exists on \"notifications\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_read_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"notifications\"",
+          "btree",
+          "[\"read_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_user_id_index",
+    "label": "Create index \"notifications_user_id_index\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_user_id_index",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_user_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_user_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"notifications_user_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_user_id_index\"",
+        "sql": "CREATE INDEX \"notifications_user_id_index\" ON \"public\".\"notifications\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_user_id_index\" exists on \"notifications\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_user_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"notifications\"",
+          "btree",
+          "[\"user_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.notifications.notifications_user_id_is_pinned_created_at_index",
+    "label": "Create index \"notifications_user_id_is_pinned_created_at_index\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "notifications_user_id_is_pinned_created_at_index",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notifications_user_id_is_pinned_created_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_user_id_is_pinned_created_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"notifications_user_id_is_pinned_created_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notifications_user_id_is_pinned_created_at_index\"",
+        "sql": "CREATE INDEX \"notifications_user_id_is_pinned_created_at_index\" ON \"public\".\"notifications\" (\"user_id\", \"is_pinned\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notifications_user_id_is_pinned_created_at_index\" exists on \"notifications\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"notifications_user_id_is_pinned_created_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"notifications\"",
+          "btree",
+          "[\"user_id\",\"is_pinned\",\"created_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.offline_queue.offline_queue_kasir_id_index",
+    "label": "Create index \"offline_queue_kasir_id_index\" on \"offline_queue\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "offline_queue_kasir_id_index",
+        "table": "offline_queue"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"offline_queue_kasir_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_kasir_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"offline_queue_kasir_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"offline_queue_kasir_id_index\"",
+        "sql": "CREATE INDEX \"offline_queue_kasir_id_index\" ON \"public\".\"offline_queue\" (\"kasir_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"offline_queue_kasir_id_index\" exists on \"offline_queue\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_kasir_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"offline_queue\"",
+          "btree",
+          "[\"kasir_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.offline_queue.offline_queue_kasir_id_status_index",
+    "label": "Create index \"offline_queue_kasir_id_status_index\" on \"offline_queue\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "offline_queue_kasir_id_status_index",
+        "table": "offline_queue"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"offline_queue_kasir_id_status_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_kasir_id_status_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"offline_queue_kasir_id_status_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"offline_queue_kasir_id_status_index\"",
+        "sql": "CREATE INDEX \"offline_queue_kasir_id_status_index\" ON \"public\".\"offline_queue\" (\"kasir_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"offline_queue_kasir_id_status_index\" exists on \"offline_queue\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_kasir_id_status_index\"",
+          "i",
+          "I",
+          "\"public\".\"offline_queue\"",
+          "btree",
+          "[\"kasir_id\",\"status\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.offline_queue.offline_queue_status_index",
+    "label": "Create index \"offline_queue_status_index\" on \"offline_queue\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "offline_queue_status_index",
+        "table": "offline_queue"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"offline_queue_status_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_status_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"offline_queue_status_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"offline_queue_status_index\"",
+        "sql": "CREATE INDEX \"offline_queue_status_index\" ON \"public\".\"offline_queue\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"offline_queue_status_index\" exists on \"offline_queue\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"offline_queue_status_index\"",
+          "i",
+          "I",
+          "\"public\".\"offline_queue\"",
+          "btree",
+          "[\"status\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.products.products_category_index",
+    "label": "Create index \"products_category_index\" on \"products\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "products_category_index",
+        "table": "products"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"products_category_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"products_category_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"products_category_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"products_category_index\"",
+        "sql": "CREATE INDEX \"products_category_index\" ON \"public\".\"products\" (\"category\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"products_category_index\" exists on \"products\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"products_category_index\"",
+          "i",
+          "I",
+          "\"public\".\"products\"",
+          "btree",
+          "[\"category\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.products.products_stock_index",
+    "label": "Create index \"products_stock_index\" on \"products\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "products_stock_index",
+        "table": "products"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"products_stock_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"products_stock_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"products_stock_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"products_stock_index\"",
+        "sql": "CREATE INDEX \"products_stock_index\" ON \"public\".\"products\" (\"stock\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"products_stock_index\" exists on \"products\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"products_stock_index\"",
+          "i",
+          "I",
+          "\"public\".\"products\"",
+          "btree",
+          "[\"stock\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.refunds.refunds_approved_by_idx",
+    "label": "Create index \"refunds_approved_by_idx\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "refunds_approved_by_idx",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"refunds_approved_by_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_approved_by_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"refunds_approved_by_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"refunds_approved_by_idx\"",
+        "sql": "CREATE INDEX \"refunds_approved_by_idx\" ON \"public\".\"refunds\" (\"approved_by\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"refunds_approved_by_idx\" exists on \"refunds\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_approved_by_idx\"",
+          "i",
+          "I",
+          "\"public\".\"refunds\"",
+          "btree",
+          "[\"approved_by\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.refunds.refunds_requested_by_created_at_index",
+    "label": "Create index \"refunds_requested_by_created_at_index\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "refunds_requested_by_created_at_index",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"refunds_requested_by_created_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_requested_by_created_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"refunds_requested_by_created_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"refunds_requested_by_created_at_index\"",
+        "sql": "CREATE INDEX \"refunds_requested_by_created_at_index\" ON \"public\".\"refunds\" (\"requested_by\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"refunds_requested_by_created_at_index\" exists on \"refunds\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_requested_by_created_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"refunds\"",
+          "btree",
+          "[\"requested_by\",\"created_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.refunds.refunds_transaction_id_status_index",
+    "label": "Create index \"refunds_transaction_id_status_index\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "refunds_transaction_id_status_index",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"refunds_transaction_id_status_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_transaction_id_status_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"refunds_transaction_id_status_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"refunds_transaction_id_status_index\"",
+        "sql": "CREATE INDEX \"refunds_transaction_id_status_index\" ON \"public\".\"refunds\" (\"transaction_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"refunds_transaction_id_status_index\" exists on \"refunds\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"refunds_transaction_id_status_index\"",
+          "i",
+          "I",
+          "\"public\".\"refunds\"",
+          "btree",
+          "[\"transaction_id\",\"status\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sale_template_items.sale_template_items_product_id_idx",
+    "label": "Create index \"sale_template_items_product_id_idx\" on \"sale_template_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sale_template_items_product_id_idx",
+        "table": "sale_template_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sale_template_items_product_id_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items_product_id_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sale_template_items_product_id_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sale_template_items_product_id_idx\"",
+        "sql": "CREATE INDEX \"sale_template_items_product_id_idx\" ON \"public\".\"sale_template_items\" (\"product_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sale_template_items_product_id_idx\" exists on \"sale_template_items\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items_product_id_idx\"",
+          "i",
+          "I",
+          "\"public\".\"sale_template_items\"",
+          "btree",
+          "[\"product_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sale_template_items.sale_template_items_template_id_idx",
+    "label": "Create index \"sale_template_items_template_id_idx\" on \"sale_template_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sale_template_items_template_id_idx",
+        "table": "sale_template_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sale_template_items_template_id_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items_template_id_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sale_template_items_template_id_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sale_template_items_template_id_idx\"",
+        "sql": "CREATE INDEX \"sale_template_items_template_id_idx\" ON \"public\".\"sale_template_items\" (\"template_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sale_template_items_template_id_idx\" exists on \"sale_template_items\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_template_items_template_id_idx\"",
+          "i",
+          "I",
+          "\"public\".\"sale_template_items\"",
+          "btree",
+          "[\"template_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sale_templates.sale_templates_kasir_id_index",
+    "label": "Create index \"sale_templates_kasir_id_index\" on \"sale_templates\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sale_templates_kasir_id_index",
+        "table": "sale_templates"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sale_templates_kasir_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates_kasir_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sale_templates_kasir_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sale_templates_kasir_id_index\"",
+        "sql": "CREATE INDEX \"sale_templates_kasir_id_index\" ON \"public\".\"sale_templates\" (\"kasir_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sale_templates_kasir_id_index\" exists on \"sale_templates\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates_kasir_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"sale_templates\"",
+          "btree",
+          "[\"kasir_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sale_templates.sale_templates_kasir_id_is_active_index",
+    "label": "Create index \"sale_templates_kasir_id_is_active_index\" on \"sale_templates\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sale_templates_kasir_id_is_active_index",
+        "table": "sale_templates"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sale_templates_kasir_id_is_active_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates_kasir_id_is_active_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sale_templates_kasir_id_is_active_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sale_templates_kasir_id_is_active_index\"",
+        "sql": "CREATE INDEX \"sale_templates_kasir_id_is_active_index\" ON \"public\".\"sale_templates\" (\"kasir_id\", \"is_active\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sale_templates_kasir_id_is_active_index\" exists on \"sale_templates\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sale_templates_kasir_id_is_active_index\"",
+          "i",
+          "I",
+          "\"public\".\"sale_templates\"",
+          "btree",
+          "[\"kasir_id\",\"is_active\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sessions.sessions_last_activity_index",
+    "label": "Create index \"sessions_last_activity_index\" on \"sessions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sessions_last_activity_index",
+        "table": "sessions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sessions_last_activity_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sessions_last_activity_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sessions_last_activity_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sessions_last_activity_index\"",
+        "sql": "CREATE INDEX \"sessions_last_activity_index\" ON \"public\".\"sessions\" (\"last_activity\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sessions_last_activity_index\" exists on \"sessions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sessions_last_activity_index\"",
+          "i",
+          "I",
+          "\"public\".\"sessions\"",
+          "btree",
+          "[\"last_activity\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.sessions.sessions_user_id_index",
+    "label": "Create index \"sessions_user_id_index\" on \"sessions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "sessions_user_id_index",
+        "table": "sessions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"sessions_user_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"sessions_user_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"sessions_user_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"sessions_user_id_index\"",
+        "sql": "CREATE INDEX \"sessions_user_id_index\" ON \"public\".\"sessions\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"sessions_user_id_index\" exists on \"sessions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"sessions_user_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"sessions\"",
+          "btree",
+          "[\"user_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.shifts.shifts_kasir_id_closed_at_index",
+    "label": "Create index \"shifts_kasir_id_closed_at_index\" on \"shifts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "shifts_kasir_id_closed_at_index",
+        "table": "shifts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"shifts_kasir_id_closed_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_kasir_id_closed_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"shifts_kasir_id_closed_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"shifts_kasir_id_closed_at_index\"",
+        "sql": "CREATE INDEX \"shifts_kasir_id_closed_at_index\" ON \"public\".\"shifts\" (\"kasir_id\", \"closed_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"shifts_kasir_id_closed_at_index\" exists on \"shifts\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_kasir_id_closed_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"shifts\"",
+          "btree",
+          "[\"kasir_id\",\"closed_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.shifts.shifts_kasir_id_status_index",
+    "label": "Create index \"shifts_kasir_id_status_index\" on \"shifts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "shifts_kasir_id_status_index",
+        "table": "shifts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"shifts_kasir_id_status_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_kasir_id_status_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"shifts_kasir_id_status_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"shifts_kasir_id_status_index\"",
+        "sql": "CREATE INDEX \"shifts_kasir_id_status_index\" ON \"public\".\"shifts\" (\"kasir_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"shifts_kasir_id_status_index\" exists on \"shifts\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_kasir_id_status_index\"",
+          "i",
+          "I",
+          "\"public\".\"shifts\"",
+          "btree",
+          "[\"kasir_id\",\"status\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.shifts.shifts_opened_at_closed_at_index",
+    "label": "Create index \"shifts_opened_at_closed_at_index\" on \"shifts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "shifts_opened_at_closed_at_index",
+        "table": "shifts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"shifts_opened_at_closed_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_opened_at_closed_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"shifts_opened_at_closed_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"shifts_opened_at_closed_at_index\"",
+        "sql": "CREATE INDEX \"shifts_opened_at_closed_at_index\" ON \"public\".\"shifts\" (\"opened_at\", \"closed_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"shifts_opened_at_closed_at_index\" exists on \"shifts\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"shifts_opened_at_closed_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"shifts\"",
+          "btree",
+          "[\"opened_at\",\"closed_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.topups.topups_user_id_idx",
+    "label": "Create index \"topups_user_id_idx\" on \"topups\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "topups_user_id_idx",
+        "table": "topups"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"topups_user_id_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"topups_user_id_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"topups_user_id_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"topups_user_id_idx\"",
+        "sql": "CREATE INDEX \"topups_user_id_idx\" ON \"public\".\"topups\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"topups_user_id_idx\" exists on \"topups\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"topups_user_id_idx\"",
+          "i",
+          "I",
+          "\"public\".\"topups\"",
+          "btree",
+          "[\"user_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transaction_items.transaction_items_product_id_index",
+    "label": "Create index \"transaction_items_product_id_index\" on \"transaction_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transaction_items_product_id_index",
+        "table": "transaction_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transaction_items_product_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items_product_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transaction_items_product_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transaction_items_product_id_index\"",
+        "sql": "CREATE INDEX \"transaction_items_product_id_index\" ON \"public\".\"transaction_items\" (\"product_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transaction_items_product_id_index\" exists on \"transaction_items\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items_product_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"transaction_items\"",
+          "btree",
+          "[\"product_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transaction_items.transaction_items_transaction_id_idx",
+    "label": "Create index \"transaction_items_transaction_id_idx\" on \"transaction_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transaction_items_transaction_id_idx",
+        "table": "transaction_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transaction_items_transaction_id_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items_transaction_id_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transaction_items_transaction_id_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transaction_items_transaction_id_idx\"",
+        "sql": "CREATE INDEX \"transaction_items_transaction_id_idx\" ON \"public\".\"transaction_items\" (\"transaction_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transaction_items_transaction_id_idx\" exists on \"transaction_items\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transaction_items_transaction_id_idx\"",
+          "i",
+          "I",
+          "\"public\".\"transaction_items\"",
+          "btree",
+          "[\"transaction_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transactions.transactions_pickup_code_index",
+    "label": "Create index \"transactions_pickup_code_index\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transactions_pickup_code_index",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transactions_pickup_code_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_pickup_code_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transactions_pickup_code_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transactions_pickup_code_index\"",
+        "sql": "CREATE INDEX \"transactions_pickup_code_index\" ON \"public\".\"transactions\" (\"pickup_code\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transactions_pickup_code_index\" exists on \"transactions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_pickup_code_index\"",
+          "i",
+          "I",
+          "\"public\".\"transactions\"",
+          "btree",
+          "[\"pickup_code\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transactions.transactions_shift_id_idx",
+    "label": "Create index \"transactions_shift_id_idx\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transactions_shift_id_idx",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transactions_shift_id_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_shift_id_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transactions_shift_id_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transactions_shift_id_idx\"",
+        "sql": "CREATE INDEX \"transactions_shift_id_idx\" ON \"public\".\"transactions\" (\"shift_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transactions_shift_id_idx\" exists on \"transactions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_shift_id_idx\"",
+          "i",
+          "I",
+          "\"public\".\"transactions\"",
+          "btree",
+          "[\"shift_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transactions.transactions_status_created_at_index",
+    "label": "Create index \"transactions_status_created_at_index\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transactions_status_created_at_index",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transactions_status_created_at_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_status_created_at_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transactions_status_created_at_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transactions_status_created_at_index\"",
+        "sql": "CREATE INDEX \"transactions_status_created_at_index\" ON \"public\".\"transactions\" (\"status\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transactions_status_created_at_index\" exists on \"transactions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_status_created_at_index\"",
+          "i",
+          "I",
+          "\"public\".\"transactions\"",
+          "btree",
+          "[\"status\",\"created_at\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.transactions.transactions_user_id_status_index",
+    "label": "Create index \"transactions_user_id_status_index\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "transactions_user_id_status_index",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"transactions_user_id_status_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_user_id_status_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"transactions_user_id_status_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"transactions_user_id_status_index\"",
+        "sql": "CREATE INDEX \"transactions_user_id_status_index\" ON \"public\".\"transactions\" (\"user_id\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"transactions_user_id_status_index\" exists on \"transactions\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"transactions_user_id_status_index\"",
+          "i",
+          "I",
+          "\"public\".\"transactions\"",
+          "btree",
+          "[\"user_id\",\"status\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.users.users_email_unique",
+    "label": "Create index \"users_email_unique\" on \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "users_email_unique",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"users_email_unique\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_email_unique\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"users_email_unique\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"users_email_unique\"",
+        "sql": "CREATE UNIQUE INDEX \"users_email_unique\" ON \"public\".\"users\" (\"email\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"users_email_unique\" exists on \"users\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND \"i\".\"indisunique\" AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"users_email_unique\"",
+          "i",
+          "I",
+          "\"public\".\"users\"",
+          "btree",
+          "[\"email\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.users.users_google_id_index",
+    "label": "Create index \"users_google_id_index\" on \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "users_google_id_index",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"users_google_id_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_google_id_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"users_google_id_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"users_google_id_index\"",
+        "sql": "CREATE INDEX \"users_google_id_index\" ON \"public\".\"users\" (\"google_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"users_google_id_index\" exists on \"users\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"users_google_id_index\"",
+          "i",
+          "I",
+          "\"public\".\"users\"",
+          "btree",
+          "[\"google_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.users.users_role_index",
+    "label": "Create index \"users_role_index\" on \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "users_role_index",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"users_role_index\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users_role_index\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"users_role_index\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"users_role_index\"",
+        "sql": "CREATE INDEX \"users_role_index\" ON \"public\".\"users\" (\"role\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"users_role_index\" exists on \"users\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"users_role_index\"",
+          "i",
+          "I",
+          "\"public\".\"users\"",
+          "btree",
+          "[\"role\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.audit_logs.audit_logs_user_id_foreign",
+    "label": "Add foreign key \"audit_logs_user_id_foreign\" on \"audit_logs\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "audit_logs_user_id_foreign",
+        "table": "audit_logs"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"audit_logs_user_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "audit_logs_user_id_foreign",
+          "public",
+          "\"public\".\"audit_logs\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"audit_logs_user_id_foreign\" on \"audit_logs\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"audit_logs_user_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"audit_logs\"\nADD CONSTRAINT \"audit_logs_user_id_foreign\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"audit_logs_user_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "audit_logs_user_id_foreign",
+          "public",
+          "\"public\".\"audit_logs\"",
+          "f",
+          "[\"user_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.inventory_adjustments.inventory_adjustments_product_id_foreign",
+    "label": "Add foreign key \"inventory_adjustments_product_id_foreign\" on \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "inventory_adjustments_product_id_foreign",
+        "table": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"inventory_adjustments_product_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "inventory_adjustments_product_id_foreign",
+          "public",
+          "\"public\".\"inventory_adjustments\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"inventory_adjustments_product_id_foreign\" on \"inventory_adjustments\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"inventory_adjustments_product_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"inventory_adjustments\"\nADD CONSTRAINT \"inventory_adjustments_product_id_foreign\"\nFOREIGN KEY (\"product_id\")\nREFERENCES \"public\".\"products\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"inventory_adjustments_product_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "inventory_adjustments_product_id_foreign",
+          "public",
+          "\"public\".\"inventory_adjustments\"",
+          "f",
+          "[\"product_id\"]",
+          "\"public\".\"products\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.inventory_adjustments.inventory_adjustments_verified_by_foreign",
+    "label": "Add foreign key \"inventory_adjustments_verified_by_foreign\" on \"inventory_adjustments\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "inventory_adjustments_verified_by_foreign",
+        "table": "inventory_adjustments"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"inventory_adjustments_verified_by_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "inventory_adjustments_verified_by_foreign",
+          "public",
+          "\"public\".\"inventory_adjustments\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"inventory_adjustments_verified_by_foreign\" on \"inventory_adjustments\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"inventory_adjustments_verified_by_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"inventory_adjustments\"\nADD CONSTRAINT \"inventory_adjustments_verified_by_foreign\"\nFOREIGN KEY (\"verified_by\")\nREFERENCES \"public\".\"users\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"inventory_adjustments_verified_by_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "inventory_adjustments_verified_by_foreign",
+          "public",
+          "\"public\".\"inventory_adjustments\"",
+          "f",
+          "[\"verified_by\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.inventory_alerts.inventory_alerts_product_id_foreign",
+    "label": "Add foreign key \"inventory_alerts_product_id_foreign\" on \"inventory_alerts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "inventory_alerts_product_id_foreign",
+        "table": "inventory_alerts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"inventory_alerts_product_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "inventory_alerts_product_id_foreign",
+          "public",
+          "\"public\".\"inventory_alerts\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"inventory_alerts_product_id_foreign\" on \"inventory_alerts\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"inventory_alerts_product_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"inventory_alerts\"\nADD CONSTRAINT \"inventory_alerts_product_id_foreign\"\nFOREIGN KEY (\"product_id\")\nREFERENCES \"public\".\"products\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"inventory_alerts_product_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "inventory_alerts_product_id_foreign",
+          "public",
+          "\"public\".\"inventory_alerts\"",
+          "f",
+          "[\"product_id\"]",
+          "\"public\".\"products\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.notifications.notifications_user_id_foreign",
+    "label": "Add foreign key \"notifications_user_id_foreign\" on \"notifications\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "notifications_user_id_foreign",
+        "table": "notifications"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"notifications_user_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "notifications_user_id_foreign",
+          "public",
+          "\"public\".\"notifications\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"notifications_user_id_foreign\" on \"notifications\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"notifications_user_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"notifications\"\nADD CONSTRAINT \"notifications_user_id_foreign\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"notifications_user_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "notifications_user_id_foreign",
+          "public",
+          "\"public\".\"notifications\"",
+          "f",
+          "[\"user_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.offline_queue.offline_queue_kasir_id_foreign",
+    "label": "Add foreign key \"offline_queue_kasir_id_foreign\" on \"offline_queue\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "offline_queue_kasir_id_foreign",
+        "table": "offline_queue"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"offline_queue_kasir_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "offline_queue_kasir_id_foreign",
+          "public",
+          "\"public\".\"offline_queue\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"offline_queue_kasir_id_foreign\" on \"offline_queue\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"offline_queue_kasir_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"offline_queue\"\nADD CONSTRAINT \"offline_queue_kasir_id_foreign\"\nFOREIGN KEY (\"kasir_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"offline_queue_kasir_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "offline_queue_kasir_id_foreign",
+          "public",
+          "\"public\".\"offline_queue\"",
+          "f",
+          "[\"kasir_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.refunds.refunds_approved_by_foreign",
+    "label": "Add foreign key \"refunds_approved_by_foreign\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "refunds_approved_by_foreign",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"refunds_approved_by_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refunds_approved_by_foreign",
+          "public",
+          "\"public\".\"refunds\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"refunds_approved_by_foreign\" on \"refunds\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"refunds_approved_by_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"refunds\"\nADD CONSTRAINT \"refunds_approved_by_foreign\"\nFOREIGN KEY (\"approved_by\")\nREFERENCES \"public\".\"users\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"refunds_approved_by_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "refunds_approved_by_foreign",
+          "public",
+          "\"public\".\"refunds\"",
+          "f",
+          "[\"approved_by\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.refunds.refunds_requested_by_foreign",
+    "label": "Add foreign key \"refunds_requested_by_foreign\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "refunds_requested_by_foreign",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"refunds_requested_by_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refunds_requested_by_foreign",
+          "public",
+          "\"public\".\"refunds\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"refunds_requested_by_foreign\" on \"refunds\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"refunds_requested_by_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"refunds\"\nADD CONSTRAINT \"refunds_requested_by_foreign\"\nFOREIGN KEY (\"requested_by\")\nREFERENCES \"public\".\"users\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"refunds_requested_by_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "refunds_requested_by_foreign",
+          "public",
+          "\"public\".\"refunds\"",
+          "f",
+          "[\"requested_by\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.refunds.refunds_transaction_id_foreign",
+    "label": "Add foreign key \"refunds_transaction_id_foreign\" on \"refunds\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "refunds_transaction_id_foreign",
+        "table": "refunds"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"refunds_transaction_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refunds_transaction_id_foreign",
+          "public",
+          "\"public\".\"refunds\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"refunds_transaction_id_foreign\" on \"refunds\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"refunds_transaction_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"refunds\"\nADD CONSTRAINT \"refunds_transaction_id_foreign\"\nFOREIGN KEY (\"transaction_id\")\nREFERENCES \"public\".\"transactions\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"refunds_transaction_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "refunds_transaction_id_foreign",
+          "public",
+          "\"public\".\"refunds\"",
+          "f",
+          "[\"transaction_id\"]",
+          "\"public\".\"transactions\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.sale_template_items.sale_template_items_product_id_foreign",
+    "label": "Add foreign key \"sale_template_items_product_id_foreign\" on \"sale_template_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "sale_template_items_product_id_foreign",
+        "table": "sale_template_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"sale_template_items_product_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "sale_template_items_product_id_foreign",
+          "public",
+          "\"public\".\"sale_template_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"sale_template_items_product_id_foreign\" on \"sale_template_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"sale_template_items_product_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"sale_template_items\"\nADD CONSTRAINT \"sale_template_items_product_id_foreign\"\nFOREIGN KEY (\"product_id\")\nREFERENCES \"public\".\"products\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"sale_template_items_product_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "sale_template_items_product_id_foreign",
+          "public",
+          "\"public\".\"sale_template_items\"",
+          "f",
+          "[\"product_id\"]",
+          "\"public\".\"products\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.sale_template_items.sale_template_items_template_id_foreign",
+    "label": "Add foreign key \"sale_template_items_template_id_foreign\" on \"sale_template_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "sale_template_items_template_id_foreign",
+        "table": "sale_template_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"sale_template_items_template_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "sale_template_items_template_id_foreign",
+          "public",
+          "\"public\".\"sale_template_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"sale_template_items_template_id_foreign\" on \"sale_template_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"sale_template_items_template_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"sale_template_items\"\nADD CONSTRAINT \"sale_template_items_template_id_foreign\"\nFOREIGN KEY (\"template_id\")\nREFERENCES \"public\".\"sale_templates\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"sale_template_items_template_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "sale_template_items_template_id_foreign",
+          "public",
+          "\"public\".\"sale_template_items\"",
+          "f",
+          "[\"template_id\"]",
+          "\"public\".\"sale_templates\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.sale_templates.sale_templates_kasir_id_foreign",
+    "label": "Add foreign key \"sale_templates_kasir_id_foreign\" on \"sale_templates\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "sale_templates_kasir_id_foreign",
+        "table": "sale_templates"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"sale_templates_kasir_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "sale_templates_kasir_id_foreign",
+          "public",
+          "\"public\".\"sale_templates\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"sale_templates_kasir_id_foreign\" on \"sale_templates\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"sale_templates_kasir_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"sale_templates\"\nADD CONSTRAINT \"sale_templates_kasir_id_foreign\"\nFOREIGN KEY (\"kasir_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"sale_templates_kasir_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "sale_templates_kasir_id_foreign",
+          "public",
+          "\"public\".\"sale_templates\"",
+          "f",
+          "[\"kasir_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.shifts.shifts_kasir_id_foreign",
+    "label": "Add foreign key \"shifts_kasir_id_foreign\" on \"shifts\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "shifts_kasir_id_foreign",
+        "table": "shifts"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"shifts_kasir_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "shifts_kasir_id_foreign",
+          "public",
+          "\"public\".\"shifts\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"shifts_kasir_id_foreign\" on \"shifts\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"shifts_kasir_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"shifts\"\nADD CONSTRAINT \"shifts_kasir_id_foreign\"\nFOREIGN KEY (\"kasir_id\")\nREFERENCES \"public\".\"users\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"shifts_kasir_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "shifts_kasir_id_foreign",
+          "public",
+          "\"public\".\"shifts\"",
+          "f",
+          "[\"kasir_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.topups.topups_user_id_foreign",
+    "label": "Add foreign key \"topups_user_id_foreign\" on \"topups\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "topups_user_id_foreign",
+        "table": "topups"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"topups_user_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "topups_user_id_foreign",
+          "public",
+          "\"public\".\"topups\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"topups_user_id_foreign\" on \"topups\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"topups_user_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"topups\"\nADD CONSTRAINT \"topups_user_id_foreign\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"topups_user_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "topups_user_id_foreign",
+          "public",
+          "\"public\".\"topups\"",
+          "f",
+          "[\"user_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.transaction_items.transaction_items_product_id_foreign",
+    "label": "Add foreign key \"transaction_items_product_id_foreign\" on \"transaction_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "transaction_items_product_id_foreign",
+        "table": "transaction_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"transaction_items_product_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "transaction_items_product_id_foreign",
+          "public",
+          "\"public\".\"transaction_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"transaction_items_product_id_foreign\" on \"transaction_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"transaction_items_product_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"transaction_items\"\nADD CONSTRAINT \"transaction_items_product_id_foreign\"\nFOREIGN KEY (\"product_id\")\nREFERENCES \"public\".\"products\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"transaction_items_product_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "transaction_items_product_id_foreign",
+          "public",
+          "\"public\".\"transaction_items\"",
+          "f",
+          "[\"product_id\"]",
+          "\"public\".\"products\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.transaction_items.transaction_items_transaction_id_foreign",
+    "label": "Add foreign key \"transaction_items_transaction_id_foreign\" on \"transaction_items\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "transaction_items_transaction_id_foreign",
+        "table": "transaction_items"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"transaction_items_transaction_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "transaction_items_transaction_id_foreign",
+          "public",
+          "\"public\".\"transaction_items\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"transaction_items_transaction_id_foreign\" on \"transaction_items\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"transaction_items_transaction_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"transaction_items\"\nADD CONSTRAINT \"transaction_items_transaction_id_foreign\"\nFOREIGN KEY (\"transaction_id\")\nREFERENCES \"public\".\"transactions\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"transaction_items_transaction_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "transaction_items_transaction_id_foreign",
+          "public",
+          "\"public\".\"transaction_items\"",
+          "f",
+          "[\"transaction_id\"]",
+          "\"public\".\"transactions\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.transactions.transactions_shift_id_foreign",
+    "label": "Add foreign key \"transactions_shift_id_foreign\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "transactions_shift_id_foreign",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"transactions_shift_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "transactions_shift_id_foreign",
+          "public",
+          "\"public\".\"transactions\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"transactions_shift_id_foreign\" on \"transactions\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"transactions_shift_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"transactions\"\nADD CONSTRAINT \"transactions_shift_id_foreign\"\nFOREIGN KEY (\"shift_id\")\nREFERENCES \"public\".\"shifts\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"transactions_shift_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "transactions_shift_id_foreign",
+          "public",
+          "\"public\".\"transactions\"",
+          "f",
+          "[\"shift_id\"]",
+          "\"public\".\"shifts\"",
+          "[\"id\"]",
+          "n",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.transactions.transactions_user_id_foreign",
+    "label": "Add foreign key \"transactions_user_id_foreign\" on \"transactions\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "transactions_user_id_foreign",
+        "table": "transactions"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"transactions_user_id_foreign\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "transactions_user_id_foreign",
+          "public",
+          "\"public\".\"transactions\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"transactions_user_id_foreign\" on \"transactions\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"transactions_user_id_foreign\"",
+        "sql": "ALTER TABLE \"public\".\"transactions\"\nADD CONSTRAINT \"transactions_user_id_foreign\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"transactions_user_id_foreign\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "transactions_user_id_foreign",
+          "public",
+          "\"public\".\"transactions\"",
+          "f",
+          "[\"user_id\"]",
+          "\"public\".\"users\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  }
+]

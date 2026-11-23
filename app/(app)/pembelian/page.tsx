@@ -5,18 +5,12 @@ import { PurchaseClient } from "@/components/purchase-client";
 export default async function PembelianPage() {
   await requireRole("user");
 
-  const products = await db.products.findMany({
-    where: { deleted_at: null, stock: { gt: 0 } },
-    orderBy: { created_at: "desc" },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      stock: true,
-      category: true,
-      image: true,
-    },
-  });
+  const products = await db.orm.public.products
+    .where({ deleted_at: null })
+    .where((p) => p.stock.gt(0))
+    .orderBy((p) => p.created_at.desc())
+    .select("id", "name", "price", "stock", "category", "image")
+    .all();
 
   const serialized = products.map((p) => ({
     id: Number(p.id),

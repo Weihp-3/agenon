@@ -13,24 +13,29 @@ export default async function LaporanPage() {
   sevenDaysAgo.setHours(0, 0, 0, 0);
 
   const [transactions, topProducts] = await Promise.all([
-    db.transactions.findMany({
-      where: { status: "selesai", created_at: { gte: sevenDaysAgo } },
-      orderBy: { created_at: "asc" },
-      select: { total_price: true, created_at: true },
-    }),
-    db.transaction_items.groupBy({
-      by: ["product_id"],
-      _sum: { quantity: true, subtotal: true },
-      orderBy: { _sum: { quantity: "desc" } },
-      take: 6,
-    }),
+    db.orm.public.transactions
+      .where({ status: "selesai" })
+      .where((t) => t.created_at.gte(sevenDaysAgo))
+      .orderBy((t) => t.created_at.asc())
+      .select("total_price", "created_at")
+      .all(),
+    db.orm.public.transaction_items
+      .groupBy("product_id")
+      .aggregate((agg) => ({
+        quantity: agg.sum("quantity"),
+        subtotal: agg.sum("subtotal"),
+      }))
+      .then((rows) => {
+        rows.sort((a, b) => (b.quantity ?? 0) - (a.quantity ?? 0));
+        return rows.slice(0, 6);
+      }),
   ]);
 
   const productIds = topProducts.map((p) => p.product_id);
-  const products = await db.products.findMany({
-    where: { id: { in: productIds } },
-    select: { id: true, name: true },
-  });
+  const products = await db.orm.public.products
+    .where((p) => p.id.in(productIds))
+    .select("id", "name")
+    .all();
   const productName = new Map(products.map((p) => [p.id, p.name]));
 
   const days: { label: string; key: string }[] = [];
@@ -109,10 +114,10 @@ export default async function LaporanPage() {
                 </div>
                 <div className="text-right">
                   <p className="tabular text-sm font-semibold text-ink">
-                    {item._sum.quantity} terjual
+                    {item.quantity} terjual
                   </p>
                   <p className="tabular text-xs text-ink-muted">
-                    Rp {rupiah(item._sum.subtotal ?? 0)}
+                    Rp {rupiah(item.subtotal ?? 0)}
                   </p>
                 </div>
               </li>

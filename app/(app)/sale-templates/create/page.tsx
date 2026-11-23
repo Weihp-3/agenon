@@ -8,11 +8,11 @@ import { storeTemplateAction } from "@/lib/template-actions";
 export default async function CreateTemplatePage() {
   await requireRole("kasir");
 
-  const products = await db.products.findMany({
-    where: { deleted_at: null },
-    orderBy: { name: "asc" },
-    select: { id: true, name: true, price: true, stock: true },
-  });
+  const products = await db.orm.public.products
+    .where({ deleted_at: null })
+    .orderBy((p) => p.name.asc())
+    .select("id", "name", "price", "stock")
+    .all();
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">

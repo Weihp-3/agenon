@@ -11,17 +11,10 @@ export default async function EditProductPage({
   await requireRole("admin");
   const { id } = await params;
 
-  const product = await db.products.findUnique({
-    where: { id: BigInt(id) },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      stock: true,
-      category: true,
-      image: true,
-    },
-  });
+  const product = await db.orm.public.products
+    .whereUnique({ id: BigInt(id) })
+    .select("id", "name", "price", "stock", "category", "image")
+    .first();
 
   if (!product) notFound();
 

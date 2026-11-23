@@ -5,18 +5,12 @@ import { PosClient } from "@/components/pos-client";
 export default async function KasirPosPage() {
   await requireRole("kasir");
 
-  const products = await db.products.findMany({
-    where: { deleted_at: null, stock: { gt: 0 } },
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      stock: true,
-      category: true,
-      image: true,
-    },
-  });
+  const products = await db.orm.public.products
+    .where({ deleted_at: null })
+    .where((p) => p.stock.gt(0))
+    .select("id", "name", "price", "stock", "category", "image")
+    .orderBy((p) => p.name.asc())
+    .all();
 
   return (
     <PosClient

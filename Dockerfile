@@ -6,6 +6,7 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json bun.lock ./
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN bun install --frozen-lockfile
 
 # ---- Stage 2: build Next.js standalone ----
@@ -27,9 +28,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Prisma engine (musl) + generated client, needed at runtime
-COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=deps /app/node_modules/@prisma/client ./node_modules/@prisma/client
+# Prisma 8 runtime packages (full node_modules: orm-postgres + transitive deps)
+COPY --from=deps /app/node_modules ./node_modules
 
 EXPOSE 3000
 

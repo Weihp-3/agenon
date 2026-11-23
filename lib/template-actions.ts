@@ -29,13 +29,11 @@ export async function storeTemplateAction(formData: FormData) {
     return redirect(flashPath("/sale-templates/create", "error", "Pilih minimal satu produk."));
   }
 
-  await db.sale_templates.create({
-    data: {
-      kasir_id: BigInt(user.id),
-      name,
-      description,
-      sale_template_items: { create: items },
-    },
+  await db.orm.public.sale_templates.create({
+    kasir_id: BigInt(user.id),
+    name,
+    description,
+    sale_template_items: (rows) => rows.create(items),
   });
 
   return redirect(flashPath("/sale-templates", "success", "Template penjualan berhasil dibuat."));
@@ -44,6 +42,6 @@ export async function storeTemplateAction(formData: FormData) {
 /** Delete a sale template. */
 export async function destroyTemplateAction(id: string) {
   await requireRole("kasir");
-  await db.sale_templates.delete({ where: { id: BigInt(id) } });
+  await db.orm.public.sale_templates.where({ id: BigInt(id) }).delete();
   return redirect(flashPath("/sale-templates", "success", "Template berhasil dihapus."));
 }

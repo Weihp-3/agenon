@@ -7,11 +7,11 @@ import { rupiah, shiftStatusLabel, formatDateTime } from "@/lib/format";
 export default async function KasirShiftsPage() {
   await requireRole("admin");
 
-  const shifts = await db.shifts.findMany({
-    orderBy: { opened_at: "desc" },
-    take: 100,
-    include: { users: { select: { name: true } } },
-  });
+  const shifts = await db.orm.public.shifts
+    .orderBy((s) => s.opened_at.desc())
+    .limit(100)
+    .include("users", (u) => u.select("name"))
+    .all();
 
   return (
     <div className="space-y-5">
@@ -45,7 +45,7 @@ export default async function KasirShiftsPage() {
                   return (
                     <tr key={shift.id} className="hover:bg-ink/[0.02]">
                       <td className="whitespace-nowrap px-4 py-3 font-semibold text-ink">
-                        {shift.users.name}
+                        {shift.users?.name ?? "-"}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-ink-muted">
                         {formatDateTime(shift.opened_at)}

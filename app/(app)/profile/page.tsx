@@ -8,10 +8,10 @@ import { Flash } from "@/components/flash";
 export default async function ProfilePage() {
   const sessionUser = await requireUser();
 
-  const user = await db.users.findUnique({
-    where: { id: BigInt(sessionUser.id) },
-    select: { id: true, name: true, email: true, avatar: true, role: true, created_at: true },
-  });
+  const user = await db.orm.public.users
+    .whereUnique({ id: BigInt(sessionUser.id) })
+    .select("id", "name", "email", "avatar", "role", "created_at")
+    .first();
 
   if (!user) {
     return <p className="text-sm text-ink-muted">Profil tidak ditemukan.</p>;

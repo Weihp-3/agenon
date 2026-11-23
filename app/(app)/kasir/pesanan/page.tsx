@@ -10,11 +10,11 @@ import { markReadyAction, markPickedUpAction } from "@/lib/kasir-actions";
 export default async function KasirPesananPage() {
   await requireRole("kasir");
 
-  const orders = await db.transactions.findMany({
-    where: { status: { in: ["menunggu", "siap"] } },
-    orderBy: { created_at: "asc" },
-    include: { transaction_items: { include: { products: true } } },
-  });
+  const orders = await db.orm.public.transactions
+    .where((t) => t.status.in(["menunggu", "siap"]))
+    .orderBy((t) => t.created_at.asc())
+    .include("transaction_items", (item) => item.include("products"))
+    .all();
 
   return (
     <div className="space-y-5">

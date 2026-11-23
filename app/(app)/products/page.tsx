@@ -12,10 +12,10 @@ import { destroyProduct } from "@/lib/product-actions";
 export default async function ProductsPage() {
   await requireRole("admin");
 
-  const products = await db.products.findMany({
-    where: { deleted_at: null },
-    orderBy: { name: "asc" },
-  });
+  const products = await db.orm.public.products
+    .where({ deleted_at: null })
+    .orderBy((p) => p.name.asc())
+    .all();
 
   return (
     <div className="space-y-5">

@@ -6,27 +6,18 @@ import { rupiah } from "@/lib/format";
 export default async function LaporanKasirPage() {
   await requireRole("admin");
 
-  const kasirs = await db.users.findMany({
-    where: { role: "kasir" },
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      shifts: {
-        where: { closed_at: { not: null } },
-        select: {
-          id: true,
-          opened_at: true,
-          closed_at: true,
-          expected_cash: true,
-          actual_cash: true,
-          discrepancy: true,
-        },
-        orderBy: { opened_at: "desc" },
-        take: 30,
-      },
-    },
-  });
+  const kasirs = await db.orm.public.users
+    .where({ role: "kasir" })
+    .select("id", "name")
+    .include("shifts", (shift) =>
+      shift
+        .where((s) => s.closed_at.neq(null))
+        .select("id", "opened_at", "closed_at", "expected_cash", "actual_cash", "discrepancy")
+        .orderBy((s) => s.opened_at.desc())
+        .limit(30),
+    )
+    .orderBy((u) => u.name.asc())
+    .all();
 
   return (
     <div className="space-y-5">

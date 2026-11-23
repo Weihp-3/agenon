@@ -8,11 +8,11 @@ import { rupiah } from "@/lib/format";
 export default async function InventoryAlertsPage() {
   await requireRole("admin");
 
-  const alerts = await db.inventory_alerts.findMany({
-    where: { is_active: true },
-    orderBy: { created_at: "desc" },
-    include: { products: true },
-  });
+  const alerts = await db.orm.public.inventory_alerts
+    .where({ is_active: true })
+    .orderBy((a) => a.created_at.desc())
+    .include("products")
+    .all();
 
   return (
     <div className="space-y-5">

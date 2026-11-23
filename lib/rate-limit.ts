@@ -21,13 +21,13 @@ export async function rateLimit(
   const now = Math.floor(Date.now() / 1000);
   const expiresAt = now + windowSeconds;
 
-  const row = await db.cache.findUnique({ where: { key: cacheKey } });
+  const row = await db.orm.public.cache.whereUnique({ key: cacheKey }).first();
 
   if (!row || row.expiration <= now) {
-    await db.cache.upsert({
-      where: { key: cacheKey },
+    await db.orm.public.cache.upsert({
       create: { key: cacheKey, value: "1", expiration: expiresAt },
       update: { value: "1", expiration: expiresAt },
+      conflictOn: { key: cacheKey },
     });
     return { allowed: true, remaining: Math.max(0, maxAttempts - 1), retryAfter: 0 };
   }
@@ -35,10 +35,7 @@ export async function rateLimit(
   const attempts = Number(row.value || "0") + 1;
 
   if (attempts > maxAttempts) {
-    await db.cache.update({
-      where: { key: cacheKey },
-      data: { value: String(attempts) },
-    });
+    await db.orm.public.cache.where({ key: cacheKey }).update({ value: String(attempts) });
     return {
       allowed: false,
       remaining: 0,
@@ -46,10 +43,7 @@ export async function rateLimit(
     };
   }
 
-  await db.cache.update({
-    where: { key: cacheKey },
-    data: { value: String(attempts) },
-  });
+  await db.orm.public.cache.where({ key: cacheKey }).update({ value: String(attempts) });
 
   return {
     allowed: true,

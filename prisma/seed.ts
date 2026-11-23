@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-
-const db = new PrismaClient();
+import { db } from "../lib/db";
 
 /**
  * Baseline data: akun-akun user saja. Tidak ada produk contoh,
@@ -21,11 +19,16 @@ async function main() {
   ];
 
   for (const u of users) {
-    await db.users.upsert({
-      where: { email: u.email },
-      update: { name: u.name, role: u.role, password },
-      create: { ...u, password },
-    });
+    const existing = await db.orm.public.users.where({ email: u.email }).first();
+    if (existing) {
+      await db.orm.public.users.where({ id: existing.id }).update({
+        name: u.name,
+        role: u.role,
+        password,
+      });
+    } else {
+      await db.orm.public.users.create({ ...u, password });
+    }
     console.log(`Seeded user: ${u.email} (${u.role})`);
   }
 
@@ -38,5 +41,5 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    await db.$disconnect();
+    await db.close();
   });

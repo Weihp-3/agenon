@@ -10,18 +10,12 @@ import { rupiah } from "@/lib/format";
 export default async function ProdukPage() {
   const [session, products] = await Promise.all([
     auth(),
-    db.products.findMany({
-      where: { deleted_at: null, stock: { gt: 0 } },
-      orderBy: [{ category: "asc" }, { name: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        stock: true,
-        category: true,
-        image: true,
-      },
-    }),
+    db.orm.public.products
+      .where({ deleted_at: null })
+      .where((p) => p.stock.gt(0))
+      .orderBy([(p) => p.category.asc(), (p) => p.name.asc()])
+      .select("id", "name", "price", "stock", "category", "image")
+      .all(),
   ]);
 
   const buyHref = session?.user ? "/pembelian" : "/login?callbackUrl=/pembelian";

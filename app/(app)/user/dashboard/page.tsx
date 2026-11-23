@@ -11,17 +11,14 @@ export default async function DashboardPage() {
   const user = await requireRole("user");
 
   // Count products with stock > 0 (same as Laravel: Product::where('stock', '>', 0)->select(['id'])->cursor())
-  const productsCount = await db.products.count({
-    where: { stock: { gt: 0 } },
-  });
+  const { total: productsCount } = await db.orm.public.products
+    .where((p) => p.stock.gt(0))
+    .aggregate((agg) => ({ total: agg.count() }));
 
   // Count completed transactions for this user
-  const totalTransaksi = await db.transactions.count({
-    where: {
-      user_id: BigInt(user.id),
-      status: "selesai",
-    },
-  });
+  const { total: totalTransaksi } = await db.orm.public.transactions
+    .where({ user_id: BigInt(user.id), status: "selesai" })
+    .aggregate((agg) => ({ total: agg.count() }));
 
   return (
     <div className="space-y-5">

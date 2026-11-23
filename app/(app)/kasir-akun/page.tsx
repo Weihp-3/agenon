@@ -10,22 +10,18 @@ import { destroyKasir } from "@/lib/admin-kasir-actions";
 export default async function KasirAkunPage() {
   await requireRole("admin");
 
-  const kasirs = await db.users.findMany({
-    where: { role: "kasir" },
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      created_at: true,
-      shifts: {
-        where: { closed_at: null },
-        select: { id: true, opened_at: true },
-        orderBy: { opened_at: "desc" },
-        take: 1,
-      },
-    },
-  });
+  const kasirs = await db.orm.public.users
+    .where({ role: "kasir" })
+    .select("id", "name", "email", "created_at")
+    .include("shifts", (shift) =>
+      shift
+        .where({ closed_at: null })
+        .select("id", "opened_at")
+        .orderBy((s) => s.opened_at.desc())
+        .limit(1),
+    )
+    .orderBy((u) => u.name.asc())
+    .all();
 
   return (
     <div className="space-y-5">

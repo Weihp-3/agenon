@@ -10,11 +10,11 @@ import { destroyTemplateAction } from "@/lib/template-actions";
 export default async function SaleTemplatesPage() {
   const user = await requireRole("kasir");
 
-  const templates = await db.sale_templates.findMany({
-    where: { kasir_id: BigInt(user.id) },
-    orderBy: { created_at: "desc" },
-    include: { sale_template_items: { include: { products: true } } },
-  });
+  const templates = await db.orm.public.sale_templates
+    .where({ kasir_id: BigInt(user.id) })
+    .orderBy((t) => t.created_at.desc())
+    .include("sale_template_items", (item) => item.include("products"))
+    .all();
 
   return (
     <div className="space-y-5">

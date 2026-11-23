@@ -32,10 +32,11 @@ export async function createTransactionAction(input: {
     return { success: false, message: "Metode pembayaran tidak valid." };
   }
 
-  const productIds = items.map((it) => it.id);
-  const products = await db.products.findMany({
-    where: { id: { in: productIds }, deleted_at: null },
-  });
+  const productIds = items.map((it) => BigInt(it.id));
+  const products = await db.orm.public.products
+    .where((p) => p.id.in(productIds))
+    .where({ deleted_at: null })
+    .all();
   const byId = new Map(products.map((p) => [p.id, p]));
 
   const lines: Array<{
@@ -64,45 +65,41 @@ export async function createTransactionAction(input: {
   const total = lines.reduce((sum, l) => sum + l.subtotal, 0);
   const code = pickCode(user.id);
 
-  const transaction = await db.$transaction(async (tx) => {
-    const created = await tx.transactions.create({
-      data: {
-        user_id: BigInt(user.id),
-        total_price: total,
-        payment_method,
-        status: "menunggu",
-        customer_name: input.customer_name?.trim() || user.name,
-        pickup_code: code,
-        notified_at: new Date(),
-      },
+  const transaction = await db.transaction(async (tx) => {
+    const created = await tx.orm.public.transactions.create({
+      user_id: BigInt(user.id),
+      total_price: total,
+      payment_method,
+      status: "menunggu",
+      customer_name: input.customer_name?.trim() || user.name,
+      pickup_code: code,
+      notified_at: new Date(),
     });
 
-    await tx.transaction_items.createMany({
-      data: lines.map((l) => ({
+    await tx.orm.public.transaction_items.createAll(
+      lines.map((l) => ({
         transaction_id: created.id,
         product_id: BigInt(l.product_id),
         quantity: l.quantity,
         price: l.price,
         subtotal: l.subtotal,
       })),
-    });
+    );
 
     for (const line of lines) {
-      await tx.products.update({
-        where: { id: BigInt(line.product_id) },
-        data: { stock: { decrement: line.quantity } },
-      });
+      await tx.execute(
+        tx.raw.sql`UPDATE "products" SET stock = stock - ${line.quantity} WHERE id = ${line.product_id}`
+          .affectedCount()
+          .build(),
+      );
     }
 
-    const kasir = await tx.users.findMany({
-      where: { role: "kasir" },
-      select: { id: true },
-    });
+    const kasir = await tx.orm.public.users.where({ role: "kasir" }).select("id").all();
 
     if (kasir.length > 0) {
       const summary = lines.map((l) => `${l.name} x${l.quantity}`).join(", ");
-      await tx.notifications.createMany({
-        data: kasir.map((k) => ({
+      await tx.orm.public.notifications.createAll(
+        kasir.map((k) => ({
           user_id: k.id,
           title: `Pesanan Baru #${created.id}`,
           message: `${user.name} memesan ${summary} (Rp ${total.toLocaleString("id-ID")}). Kode ambil: ${code}`,
@@ -111,18 +108,16 @@ export async function createTransactionAction(input: {
           icon: "fa-bell",
           data: { transaction_id: String(created.id) },
         })),
-      });
+      );
     }
 
-    await tx.audit_logs.create({
-      data: {
-        user_id: BigInt(user.id),
-        action: "transaction_create",
-        model_type: "transactions",
-        model_id: created.id,
-        after_values: { id: String(created.id), status: created.status, total_price: created.total_price },
-        description: `Pesanan dibuat oleh ${user.name}, total Rp ${total.toLocaleString("id-ID")}`,
-      },
+    await tx.orm.public.audit_logs.create({
+      user_id: BigInt(user.id),
+      action: "transaction_create",
+      model_type: "transactions",
+      model_id: created.id,
+      after_values: { id: String(created.id), status: created.status, total_price: created.total_price },
+      description: `Pesanan dibuat oleh ${user.name}, total Rp ${total.toLocaleString("id-ID")}`,
     });
 
     return created;
@@ -148,10 +143,10 @@ export async function cancelTransactionAction(
     return { success: false, message: "Kamu tidak memiliki izin untuk membatalkan transaksi ini." };
   }
 
-  const transaction = await db.transactions.findUnique({
-    where: { id: BigInt(transactionId) },
-    include: { transaction_items: true },
-  });
+  const transaction = await db.orm.public.transactions
+    .whereUnique({ id: BigInt(transactionId) })
+    .include("transaction_items")
+    .first();
 
   if (!transaction) {
     return { success: false, message: "Transaksi tidak ditemukan." };
@@ -160,39 +155,33 @@ export async function cancelTransactionAction(
     return { success: false, message: "Transaksi sudah dibatalkan." };
   }
 
-  await db.$transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     for (const item of transaction.transaction_items) {
-      await tx.products.update({
-        where: { id: item.product_id },
-        data: { stock: { increment: item.quantity } },
-      });
+      await tx.execute(
+        tx.raw.sql`UPDATE "products" SET stock = stock + ${item.quantity} WHERE id = ${Number(item.product_id)}`
+          .affectedCount()
+          .build(),
+      );
     }
 
-    await tx.transactions.update({
-      where: { id: transaction.id },
-      data: { status: "batal" },
+    await tx.orm.public.transactions.where({ id: transaction.id }).update({ status: "batal" });
+
+    await tx.orm.public.notifications.create({
+      user_id: transaction.user_id,
+      title: `Pesanan Dibatalkan #${transaction.id}`,
+      message: "Pesananmu dibatalkan kasir. Hubungi warung untuk informasi lebih lanjut.",
+      type: "error",
+      category: "purchase",
+      icon: "fa-xmark",
+      data: { transaction_id: String(transaction.id) },
     });
 
-    await tx.notifications.create({
-      data: {
-        user_id: transaction.user_id,
-        title: `Pesanan Dibatalkan #${transaction.id}`,
-        message: "Pesananmu dibatalkan kasir. Hubungi warung untuk informasi lebih lanjut.",
-        type: "error",
-        category: "purchase",
-        icon: "fa-xmark",
-        data: { transaction_id: String(transaction.id) },
-      },
-    });
-
-    await tx.audit_logs.create({
-      data: {
-        user_id: BigInt(user.id),
-        action: "transaction_cancel",
-        model_type: "transactions",
-        model_id: transaction.id,
-        description: `Transaksi #${transaction.id} dibatalkan oleh ${user.name}`,
-      },
+    await tx.orm.public.audit_logs.create({
+      user_id: BigInt(user.id),
+      action: "transaction_cancel",
+      model_type: "transactions",
+      model_id: transaction.id,
+      description: `Transaksi #${transaction.id} dibatalkan oleh ${user.name}`,
     });
   });
 

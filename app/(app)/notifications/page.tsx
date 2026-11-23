@@ -11,11 +11,14 @@ import {
 export default async function NotificationsPage() {
   const user = await requireUser();
 
-  const notifications = await db.notifications.findMany({
-    where: { user_id: BigInt(user.id) },
-    orderBy: [{ is_pinned: "desc" }, { created_at: "desc" }],
-    take: 100,
-  });
+  const notifications = await db.orm.public.notifications
+    .where({ user_id: BigInt(user.id) })
+    .orderBy((n) => n.created_at.desc())
+    .limit(100)
+    .all();
+
+  // pinned first (boolean ordering is not available on this client)
+  notifications.sort((a, b) => Number(b.is_pinned) - Number(a.is_pinned));
 
   return (
     <div className="space-y-5">

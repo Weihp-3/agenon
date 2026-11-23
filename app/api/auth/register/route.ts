@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Alamat email tidak valid." }, { status: 400 });
     }
 
-    const existing = await db.users.findUnique({ where: { email } });
+    const existing = await db.orm.public.users.where({ email }).first();
     if (existing) {
       return NextResponse.json(
         {
@@ -40,13 +40,11 @@ export async function POST(request: Request) {
       );
     }
 
-    await db.users.create({
-      data: {
-        name,
-        email,
-        password: await bcrypt.hash(password, 12),
-        role: "user",
-      },
+    await db.orm.public.users.create({
+      name,
+      email,
+      password: await bcrypt.hash(password, 12),
+      role: "user",
     });
 
     return NextResponse.json({ success: true });

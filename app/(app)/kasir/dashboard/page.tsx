@@ -16,38 +16,39 @@ export default async function KasirDashboardPage() {
   today.setHours(0, 0, 0, 0);
 
   const [todaySales, todayCount, waitingCount, openShift, previousShift] = await Promise.all([
-    db.transactions.aggregate({
-      where: {
-        status: "selesai",
-        created_at: { gte: today },
-        OR: [{ user_id: kasirId }, { customer_name: { not: null } }],
-      },
-      _sum: { total_price: true },
-    }),
-    db.transactions.count({
-      where: { status: "selesai", created_at: { gte: today } },
-    }),
-    db.transactions.count({ where: { status: "menunggu" } }),
-    db.shifts.findFirst({
-      where: { kasir_id: kasirId, closed_at: null },
-      orderBy: { opened_at: "desc" },
-    }),
-    db.shifts.findFirst({
-      where: { kasir_id: kasirId, closed_at: { not: null } },
-      orderBy: { closed_at: "desc" },
-      select: { actual_cash: true },
-    }),
+    db.orm.public.transactions
+      .where({ status: "selesai" })
+      .where((t) => t.created_at.gte(today))
+      .where((t, { fns }) => fns.or(t.user_id.eq(kasirId), t.customer_name.neq(null)))
+      .aggregate((agg) => ({ total: agg.sum("total_price") })),
+    db.orm.public.transactions
+      .where({ status: "selesai" })
+      .where((t) => t.created_at.gte(today))
+      .aggregate((agg) => ({ total: agg.count() }))
+      .then((r) => r.total),
+    db.orm.public.transactions
+      .where({ status: "menunggu" })
+      .aggregate((agg) => ({ total: agg.count() }))
+      .then((r) => r.total),
+    db.orm.public.shifts
+      .where({ kasir_id: kasirId, closed_at: null })
+      .orderBy((s) => s.opened_at.desc())
+      .first(),
+    db.orm.public.shifts
+      .where({ kasir_id: kasirId })
+      .where((s) => s.closed_at.neq(null))
+      .select("actual_cash")
+      .orderBy((s) => s.closed_at.desc())
+      .first(),
   ]);
 
   const shiftCashSales = openShift
-    ? await db.transactions.aggregate({
-        where: { shift_id: openShift.id, status: "selesai", payment_method: "cash" },
-        _sum: { total_price: true },
-        _count: { id: true },
-      })
+    ? await db.orm.public.transactions
+        .where({ shift_id: openShift.id, status: "selesai", payment_method: "cash" })
+        .aggregate((agg) => ({ total: agg.sum("total_price"), count: agg.count() }))
     : null;
   const expectedCash = openShift
-    ? Number(openShift.opening_balance) + Number(shiftCashSales?._sum.total_price ?? 0)
+    ? Number(openShift.opening_balance) + Number(shiftCashSales?.total ?? 0)
     : 0;
 
   return (
@@ -64,7 +65,7 @@ export default async function KasirDashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <Stat
           label="Penjualan hari ini"
-          value={`Rp ${rupiah(todaySales._sum.total_price ?? 0)}`}
+          value={`Rp ${rupiah(todaySales.total ?? 0)}`}
           note={`${todayCount} transaksi selesai`}
           tone="brand"
           icon="chart"
@@ -97,7 +98,7 @@ export default async function KasirDashboardPage() {
           {openShift ? (
             <form action={endShiftAction} className="space-y-3">
               <div className="rounded-lg bg-surface-sunken p-3 text-sm text-ink-muted">
-                {shiftCashSales?._count.id ?? 0} transaksi tunai · Kas harapan: <strong className="text-ink">Rp {rupiah(expectedCash)}</strong>
+                {shiftCashSales?.count ?? 0} transaksi tunai · Kas harapan: <strong className="text-ink">Rp {rupiah(expectedCash)}</strong>
               </div>
               <div>
                 <label htmlFor="actual_cash" className="field-label">Uang kas akhir</label>

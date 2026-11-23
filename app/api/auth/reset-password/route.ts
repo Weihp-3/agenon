@@ -14,23 +14,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Data tidak valid." }, { status: 400 });
     }
 
-    const record = await db.password_reset_tokens.findFirst({ where: { token } });
+    const record = await db.orm.public.password_reset_tokens.where({ token }).first();
     if (!record) {
       return NextResponse.json({ error: "Tautan reset tidak valid atau sudah dipakai." }, { status: 400 });
     }
 
     if (record.created_at && Date.now() - record.created_at.getTime() > ONE_HOUR) {
-      await db.password_reset_tokens.delete({ where: { email: record.email } });
+      await db.orm.public.password_reset_tokens.where({ email: record.email }).delete();
       return NextResponse.json({ error: "Tautan reset sudah kedaluwarsa. Minta yang baru." }, { status: 400 });
     }
 
-    await db.$transaction([
-      db.users.update({
-        where: { email: record.email },
-        data: { password: await bcrypt.hash(password, 12) },
-      }),
-      db.password_reset_tokens.delete({ where: { email: record.email } }),
-    ]);
+    await db.transaction(async (tx) => {
+      await tx.orm.public.users.where({ email: record.email }).update({
+        password: await bcrypt.hash(password, 12),
+      });
+      await tx.orm.public.password_reset_tokens.where({ email: record.email }).delete();
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

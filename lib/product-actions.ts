@@ -6,11 +6,9 @@ import { db } from "./db";
 import fs from "fs/promises";
 import path from "path";
 import { requireRole } from "./auth";
-import type { Prisma } from "@prisma/client";
 
 const PUBLIC_DIR = path.resolve("public");
 const PRODUCTS_STORAGE_DIR = path.join(PUBLIC_DIR, "storage", "products");
-const DEFAULT_IMAGE = "/images/default.png";
 
 async function ensureStorageDir() {
   await fs.mkdir(PRODUCTS_STORAGE_DIR, { recursive: true });
@@ -33,18 +31,15 @@ export async function storeProduct(formData: FormData) {
   const category = String(formData.get("category") ?? "").trim() || undefined;
   const image = formData.get("image") as File | null;
 
-  // Validation: name required
   if (!name) {
     return { success: false, error: "Nama produk wajib diisi." };
   }
 
-  // Validation: price numeric required
   const priceNum = Number(price);
   if (!Number.isFinite(priceNum) || priceNum < 0) {
     return { success: false, error: "Harga wajib berupa angka." };
   }
 
-  // Validation: stock numeric required
   const stockNum = Number(stock);
   if (!Number.isFinite(stockNum) || stockNum < 0) {
     return { success: false, error: "Stok wajib berupa angka." };
@@ -71,18 +66,19 @@ export async function storeProduct(formData: FormData) {
     imagePath = dbImagePath(fileName);
   }
 
-  const data: Prisma.productsCreateInput = {
-    name,
-    price: priceNum,
-    stock: stockNum,
-    category,
-  };
+  const data: {
+    name: string;
+    price: number;
+    stock: number;
+    category?: string;
+    image?: string | null;
+  } = { name, price: priceNum, stock: stockNum, category };
 
   if (imagePath) {
     data.image = imagePath;
   }
 
-  await db.products.create({ data });
+  await db.orm.public.products.create(data);
 
   return {
     success: true,
@@ -98,7 +94,6 @@ export async function updateProduct(id: string, formData: FormData) {
   const category = String(formData.get("category") ?? "").trim() || undefined;
   const image = formData.get("image") as File | null;
 
-  // Validation
   if (!name) {
     return { success: false, error: "Nama produk wajib diisi." };
   }
@@ -113,15 +108,14 @@ export async function updateProduct(id: string, formData: FormData) {
     return { success: false, error: "Stok wajib berupa angka." };
   }
 
-  const product = await db.products.findUnique({ where: { id: Number(id) } });
+  const product = await db.orm.public.products.whereUnique({ id: BigInt(id) }).first();
   if (!product) {
     return { success: false, error: "Produk tidak ditemukan." };
   }
 
-  let imagePath = product.image ?? null;
+  let imagePath: string | null = product.image ?? null;
 
   if (image && image.size > 0) {
-    // Delete old image if exists
     if (product.image) {
       try {
         const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
@@ -147,17 +141,17 @@ export async function updateProduct(id: string, formData: FormData) {
     imagePath = dbImagePath(fileName);
   }
 
-  const data: Prisma.productsUpdateInput = {
-    name,
-    price: priceNum,
-    stock: stockNum,
-    category,
-  };
+  const data: {
+    name: string;
+    price: number;
+    stock: number;
+    category?: string;
+    image?: string | null;
+  } = { name, price: priceNum, stock: stockNum, category };
 
   if (imagePath !== undefined && imagePath !== null) {
     data.image = imagePath;
   } else if (imagePath === null && product.image) {
-    // User cleared the image - delete old one
     try {
       const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
       await fs.unlink(oldPath).catch(() => {});
@@ -165,10 +159,7 @@ export async function updateProduct(id: string, formData: FormData) {
     data.image = null;
   }
 
-  await db.products.update({
-    where: { id: Number(id) },
-    data,
-  });
+  await db.orm.public.products.where({ id: BigInt(id) }).update(data);
 
   return {
     success: true,
@@ -178,12 +169,11 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function destroyProduct(id: string): Promise<void> {
   await requireRole("admin");
-  const product = await db.products.findUnique({ where: { id: BigInt(id) } });
+  const product = await db.orm.public.products.whereUnique({ id: BigInt(id) }).first();
   if (!product) {
     redirect("/products?flash=error&msg=Produk+tidak+ditemukan.");
   }
 
-  // Delete image file if exists
   if (product.image) {
     try {
       const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
@@ -191,7 +181,7 @@ export async function destroyProduct(id: string): Promise<void> {
     } catch {}
   }
 
-  await db.products.delete({ where: { id: BigInt(id) } });
+  await db.orm.public.products.where({ id: BigInt(id) }).delete();
 
   redirect("/products?flash=success&msg=Produk+berhasil+dihapus.");
 }
