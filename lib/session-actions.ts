@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { CredentialsSignin } from "next-auth";
 
 import { signIn, signOut } from "./auth";
 import { flashPath } from "./flash";
@@ -24,14 +25,22 @@ export async function loginAction(
     return { error: "Email dan kata sandi wajib diisi." };
   }
 
-  const result = await signIn("credentials", {
-    email: email.trim(),
-    password,
-    redirect: false,
-  });
+  try {
+    const result = await signIn("credentials", {
+      email: email.trim(),
+      password,
+      redirect: false,
+    });
 
-  if (result?.error) {
-    return { error: "Email atau kata sandi salah." };
+    if (result?.error) {
+      return { error: "Email atau kata sandi salah." };
+    }
+  } catch (error) {
+    // Auth.js v5 throws even with redirect: false when credentials are rejected.
+    if (error instanceof CredentialsSignin) {
+      return { error: "Email atau kata sandi salah." };
+    }
+    throw error;
   }
 
   redirect("/dashboard");
