@@ -3,8 +3,8 @@
 ## Identity
 - **Name**: Warung Mama Zaviyar
 - **Tagline**: Pesan dan ambil di warung
-- **What it is**: Warung klontong modern di Tangerang. User/pelanggan memesan lewat HP, bayar tunai/QRIS/transfer/saldo, lalu ambil di kasir dengan kode unik.
-- **Audience**: User/pelanggan (utama), kasir/operator warung, admin/owner.
+- **What it is**: Warung klontong modern di Tangerang. User/pelanggan memesan lewat HP, bayar tunai/QRIS/transfer/saldo, lalu ambil di warung dengan kode unik.
+- **Audience**: User/pelanggan (utama), admin/owner. Semua pengelolaan dilakukan admin.
 - **Location feel**: Tangerang, warung dekat sekolah, jam buka 07:00–21:00 WIB.
 
 ## Personality
@@ -14,7 +14,7 @@
 
 ## Palette (from existing globals.css — keep, refine roles)
 - **Ground (surface)**: `#f6f8fc` (light) / `#080e1a` (dark) — kertas/lemari warung
-- **Ground raised (surface-raised)**: `#ffffff` / `#10192a` — kartu struk, panel kasir
+- **Ground raised (surface-raised)**: `#ffffff` / `#10192a` — kartu struk, panel admin
 - **Ground sunken (surface-sunken)**: `#eee2f9` / `#050a13` — area input, keranjang
 - **Ink (ink)**: `#0f172a` / `#e2e8f0` — tulisan di struk, label harga
 - **Ink muted (ink-muted)**: `#475569` / `#94a3b8` — keterangan kecil, stok habis
@@ -29,7 +29,7 @@
 
 ## Typography
 - **Display & UI**: Plus Jakarta Sans (400, 500, 600, 700, 800) — modern, legible, karakter warung modern
-- **Mono (harga, kode, angka)**: JetBrains Mono (500, 600) — tabular-nums, rapi di struk & kasir
+- **Mono (harga, kode, angka)**: JetBrains Mono (500, 600) — tabular-nums, rapi di struk & tabel
 - **Scale**: Dua ukuran kerja — **Display** (sangat besar, untuk hero & judul halaman) dan **Body** (16–18px, leading 1.5). Tidak ada ukuran tengah.
 - **Tracking**: Display -0.02em, Body normal.
 
@@ -46,24 +46,25 @@
 - `/public/images/default.png` — fallback produk
 
 ## The Idea (one sentence)
-> **Struk belanja kasir** menjadi **frame halaman** — setiap section dibungkus seperti item di struk: nama, qty, harga, subtotal; scroll ke bawah = tambah item; footer = total & bayar.
+> **Struk belanja** menjadi **frame halaman** — setiap section dibungkus seperti item di struk: nama, qty, harga, subtotal; scroll ke bawah = tambah item; footer = total & bayar.
 
 ## Competitor test
-Warung sebelah juga punya struk. Tapi struk *Warung Mama Zaviyar* punya **kode ambil 6 huruf** (contoh: `A7F2K9`), **shift kasir** (buka/tutup saldo), dan **notifikasi real-time** ke pelanggan. Itu cuma punya kita.
+Warung sebelah juga punya struk. Tapi struk *Warung Mama Zaviyar* punya **kode ambil 6 huruf** (contoh: `A7F2K9`) dan **notifikasi real-time** ke pelanggan. Itu cuma punya kita.
 
 ## Live thing (one interactive thing)
 **Hero: "Coba hitung belanjamu"** — pelanggan pilih 1–3 produk contoh, lihat total rupiah update real-time, klik "Pesan sekar" → bawa ke `/pembelian` dengan keranjang terisi. Bekerja di HP pakai jari, fallback tanpa JS: link ke `/pembelian` dengan query `?prefill=...`.
 
 ## Sections for Landing Page (claim → proof)
 1. **Hero** — "Pesan lewat HP, ambil di warung. Buka 07:00–21:00." → Foto interior + live calculator
-2. **Cara pakai** — 3 langkah real: Pilih → Bayar → Ambil (dengan kode) → Screenshot UI kasir & pelanggan
-3. **Produk populer** — 4–6 item asli dari DB (makanan, minuman, snack) → gambar + harga + stok
-4. **Untuk kasir & admin** — Ringkasan fitur: POS, shift, laporan, stok, verifikasi bayar → screenshot dashboard
-5. **Footer** — Nama warung, jam, alamat, link login/daftar
+2. **Cara pakai** — 3 langkah real: Pilih → Bayar → Ambil (dengan kode)
+3. **Produk populer** — 4 item asli dari DB → gambar + harga + stok (fetch dari `/api/products/preview`)
+4. **Tentang warung** — Ringkasan fitur: laporan, stok, verifikasi bayar → screenshot dashboard
+5. **FAQ** — Pertanyaan yang sering ditanya
+6. **Footer** — Nama warung, jam, alamat, link login/daftar, customer service
 
-## App Screen principles (dashboard, POS, admin)
+## App Screen principles (dashboard, user, admin)
 - **Quiet borders**, small labels, repeated panels — no gradients, no glows, no icon cards
-- **One focal point per screen**: POS = keranjang + total; Dashboard = statistik hari ini; Admin = tabel butuh aksi
+- **One focal point per screen**: Belanja = keranjang + total; Dashboard = statistik hari ini; Admin = tabel butuh aksi
 - **Tabular figures** untuk semua angka (harga, stok, total)
 - **States**: empty (belum ada pesanan), loading (skeleton baris), error (banner merah + retry)
 - **Keyboard**: Tab order logis, Escape tutup modal, Enter submit form

@@ -16,7 +16,6 @@ async function main() {
 
   const users = [
     { name: "Admin Warung", email: "admin@warung.test", role: "admin" },
-    { name: "Kasir Warung", email: "kasir@warung.test", role: "kasir" },
     { name: "User Warung", email: "user@warung.test", role: "user" },
   ];
 

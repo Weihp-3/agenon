@@ -22,7 +22,7 @@ export default async function NotificationsPage() {
       <div>
         <h2 className="text-xl font-bold text-ink">Notifikasi</h2>
         <p className="mt-1 text-sm text-ink-muted">
-          Pemberitahuan pesanan, stok, dan shift warung.
+          Pemberitahuan pesanan dan stok warung.
         </p>
       </div>
 

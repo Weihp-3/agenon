@@ -103,7 +103,6 @@ export default async function AdminDashboardPage() {
               { href: "/transactions/pending", label: "Verifikasi bayar", desc: "Cek pembayaran masuk", icon: "orders" },
               { href: "/products", label: "Kelola produk", desc: "Harga, stok, gambar", icon: "box" },
               { href: "/inventory/dashboard", label: "Dashboard stok", desc: "Pantau stok kritis", icon: "stock" },
-              { href: "/kasir-akun", label: "Akun kasir", desc: "Kelola operator", icon: "users" },
             ].map((item) => (
               <a
                 key={item.href}

@@ -216,23 +216,8 @@ export function roleLabel(role: string | null | undefined): string {
   switch (role) {
     case "admin":
       return "Administrator";
-    case "kasir":
-      return "Kasir";
     default:
       return "User";
-  }
-}
-
-export function shiftStatusLabel(status: string | null | undefined): string {
-  switch (status) {
-    case "open":
-      return "Buka";
-    case "closed":
-      return "Ditutup";
-    case "verified":
-      return "Diverifikasi";
-    default:
-      return status ?? "-";
   }
 }
 

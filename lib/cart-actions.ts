@@ -4,7 +4,7 @@ import { db } from "./db";
 import { getCart, saveCart, cartTotal, type CartItem } from "./cart";
 
 /**
- * Port of KasirController's cart endpoints. The response shape matches the
+ * Cart endpoints used by the purchase flow. The response shape matches the
  * original JSON exactly, so the POS screen behaves the same.
  */
 

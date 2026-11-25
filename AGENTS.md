@@ -19,14 +19,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Script yang ada: `bun dev`, `bun run lint`, `bun run prisma:generate`, `bun run prisma:migrate` (`prisma migrate deploy`), `bun db:seed`. **Tidak ada script test maupun typecheck** — jangan mengarang `npm test`.
 - `postinstall` menjalankan `prisma generate`. Jika tipe Prisma error setelah ubah schema: `bun run prisma:generate`.
 - **Tidak ada `prisma/migrations/`.** Untuk sinkron schema ke DB lokal saat dev pakai `bunx prisma db push`; `prisma:migrate` tidak akan berguna tanpa file migrasi.
-- `bun db:seed` hanya membuat 3 user: `admin@warung.test`, `kasir@warung.test`, `user@warung.test`. Password wajib diset lewat env `SEED_PASSWORD` (jangan hardcode). Produk dan transaksi sengaja tidak dibuat — diisi lewat UI admin.
+- `bun db:seed` hanya membuat 2 user: `admin@warung.test`, `user@warung.test`. Password wajib diset lewat env `SEED_PASSWORD` (jangan hardcode). Produk dan transaksi sengaja tidak dibuat — diisi lewat UI admin.
 
 ## Arsitektur
 - Next.js 16 App Router + React 19, Prisma/PostgreSQL (Prisma Postgres), Auth.js v5 beta (JWT, tanpa adapter), Tailwind 3. Lihat docs di `node_modules/next/dist/docs/` sebelum pakai API yang tidak yakin.
 - `app/(guest)/…` = halaman sebelum login; `app/(app)/…` = dilindungi `requireUser()` di layout-nya lalu dibungkus `AppShell`. `app/page.tsx` = landing page.
 - `proxy.ts` — **bukan `middleware.ts`** (Next 16 mengganti namanya). Hanya meredirect user yang sudah login dari `/login`, `/register`, `/forgot-password`, `/reset-password` ke `/dashboard`. Cek role ada di page/server action, bukan di sini.
-- Role: `user` (pelanggan), `kasir`, `admin`. `requireRole()` di `lib/auth.ts` memanggil `forbidden()` → bergantung pada `experimental.authInterrupts: true` di `next.config.ts` dan `app/forbidden.tsx`. Jangan hapus keduanya.
-- Server action terkonsentrasi di `lib/*-actions.ts` (cart, product, kasir, admin-kasir, transaction-admin, profile, password, dll.), bukan di dalam `app/`.
+- Role: `user` (pelanggan) dan `admin`. Tidak ada role kasir — semua pengelolaan dilakukan admin. `requireRole()` di `lib/auth.ts` memanggil `forbidden()` → bergantung pada `experimental.authInterrupts: true` di `next.config.ts` dan `app/forbidden.tsx`. Jangan hapus keduanya.
+- Server action terkonsentrasi di `lib/*-actions.ts` (cart, product, transaction-admin, profile, password, dll.), bukan di dalam `app/`.
 - Alias `@/*` = root repo. Singleton Prisma ada di `lib/db.ts` (cache di `globalThis` agar hot reload tidak membuka pool baru).
 - `output: "standalone"`; Dockerfile memakai Bun Alpine + engine Prisma musl (`binaryTargets` di schema). Jangan sentuh kecuali ada tugas deploy.
 

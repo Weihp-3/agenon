@@ -40,7 +40,7 @@ export default async function TransactionReceiptPage({
         <div className="my-5 border-t border-dashed border-ink/20" />
 
         <div className="rounded-lg bg-surface-sunken p-4 text-center">
-          <p className="text-xs text-ink-muted">Tunjukkan kode ini ke kasir</p>
+          <p className="text-xs text-ink-muted">Tunjukkan kode ini saat pengambilan di warung</p>
           <div className="mt-2 flex justify-center">
             <PickupCode code={transaction.pickup_code ?? "------"} size="lg" />
           </div>

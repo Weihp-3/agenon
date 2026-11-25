@@ -24,23 +24,6 @@ export function menuFor(role: string | undefined | null): NavItem[] {
         { label: "Produk", href: "/products", icon: "box", match: ["/products"] },
         { label: "Stok", href: "/inventory/dashboard", icon: "stock", match: ["/inventory"] },
         { label: "Laporan", href: "/laporan", icon: "chart", match: ["/laporan"] },
-        {
-          label: "Kasir",
-          href: "/kasir-akun",
-          icon: "pos",
-          match: ["/kasir-akun", "/kasir-shifts"],
-        },
-        { label: "Laporan Kasir", href: "/admin/kasir/laporan", icon: "chart", match: ["/admin/kasir/laporan"] },
-      ];
-
-    case "kasir":
-      return [
-        { label: "Dashboard", href: "/kasir/dashboard", icon: "home", match: ["/kasir/dashboard"] },
-        { label: "Point of Sale", href: "/kasir", icon: "pos", match: ["/kasir"], exact: true },
-        { label: "Template Penjualan", href: "/sale-templates", icon: "orders", match: ["/sale-templates"] },
-        { label: "Antrian Pesanan", href: "/kasir/pesanan", icon: "bell", match: ["/kasir/pesanan"], badge: "orders" },
-        { label: "Riwayat", href: "/kasir/riwayat", icon: "receipt", match: ["/kasir/riwayat"] },
-        { label: "Laporan", href: "/laporan", icon: "chart", match: ["/laporan"] },
       ];
 
     default:
@@ -58,7 +41,7 @@ export async function pendingCount(
   role: string | undefined | null,
   userId: string,
 ): Promise<number> {
-  if (role === "kasir" || role === "admin") {
+  if (role === "admin") {
     return db.transactions.count({ where: { status: "menunggu" } });
   }
 

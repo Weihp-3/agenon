@@ -52,7 +52,7 @@ export default async function ProdukPage() {
             <EmptyState
               icon="box"
               title="Belum ada produk dijual"
-              description="Barang jualan belum tersedia. Coba lagi setelah kasir menambahkan stok."
+              description="Barang jualan belum tersedia. Coba lagi setelah admin menambahkan stok."
             />
           </div>
         ) : (

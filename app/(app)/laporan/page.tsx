@@ -6,7 +6,7 @@ import { RevenueChart } from "@/components/admin/revenue-chart";
 import { Suspense } from "react";
 
 export default async function LaporanPage() {
-  await requireRole("admin", "kasir");
+  await requireRole("admin");
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);

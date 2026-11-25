@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | Warung Mama Zaviyar",
   },
   description:
-    "Warung Mama Zaviyar, warung klontong di Tangerang. Pilih barang dari katalog, bayar dengan tunai, QRIS, atau transfer, lalu ambil di kasir dengan kode ambil.",
+    "Warung Mama Zaviyar, warung klontong di Tangerang. Pilih barang dari katalog, bayar dengan tunai, QRIS, atau transfer, lalu ambil di warung dengan kode ambil.",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },

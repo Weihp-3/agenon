@@ -131,6 +131,15 @@ export function AppChrome({
           <div className="flex shrink-0 items-center gap-1.5">
             <ThemeToggle />
 
+            <a
+              href="mailto:yudahp363@gmail.com?subject=Bantuan%20Warung%20Mama%20Zaviyar"
+              aria-label="Customer service"
+              title="Customer service"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink-muted hover:bg-ink/5 hover:text-ink"
+            >
+              <Icon name="mail" className="h-5 w-5" />
+            </a>
+
             <Link
               href="/notifications"
               className="relative inline-flex h-11 w-11 items-center justify-center rounded-md text-ink-muted hover:bg-ink/5 hover:text-ink"

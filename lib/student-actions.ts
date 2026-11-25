@@ -94,15 +94,15 @@ export async function createTransactionAction(input: {
       });
     }
 
-    const kasir = await tx.users.findMany({
-      where: { role: "kasir" },
+    const admins = await tx.users.findMany({
+      where: { role: "admin" },
       select: { id: true },
     });
 
-    if (kasir.length > 0) {
+    if (admins.length > 0) {
       const summary = lines.map((l) => `${l.name} x${l.quantity}`).join(", ");
       await tx.notifications.createMany({
-        data: kasir.map((k) => ({
+        data: admins.map((k) => ({
           user_id: k.id,
           title: `Pesanan Baru #${created.id}`,
           message: `${user.name} memesan ${summary} (Rp ${total.toLocaleString("id-ID")}). Kode ambil: ${code}`,
@@ -130,7 +130,7 @@ export async function createTransactionAction(input: {
 
   return {
     success: true,
-    message: "Pesanan berhasil dibuat. Menunggu kasir menyiapkan.",
+    message: "Pesanan berhasil dibuat. Menunggu admin memproses.",
     transaction_id: String(transaction.id),
     pickup_code: transaction.pickup_code,
     total_price: transaction.total_price,
@@ -138,7 +138,7 @@ export async function createTransactionAction(input: {
   };
 }
 
-/** Cancel an order and restore stock. Only admin/kasir may cancel. */
+/** Cancel an order and restore stock. Only admin may cancel. */
 export async function cancelTransactionAction(
   transactionId: number,
 ): Promise<{ success: boolean; message: string }> {
@@ -177,7 +177,7 @@ export async function cancelTransactionAction(
       data: {
         user_id: transaction.user_id,
         title: `Pesanan Dibatalkan #${transaction.id}`,
-        message: "Pesananmu dibatalkan kasir. Hubungi warung untuk informasi lebih lanjut.",
+        message: "Pesananmu dibatalkan admin. Hubungi warung untuk informasi lebih lanjut.",
         type: "error",
         category: "purchase",
         icon: "fa-xmark",

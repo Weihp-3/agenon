@@ -74,7 +74,7 @@ export default async function PesananPage() {
                 <PickupCode code={order.pickup_code ?? "------"} size="lg" />
                 <div className="sm:text-right">
                   <p className="text-xs text-ink-muted">
-                    {order.status === "siap" ? "Sudah bisa diambil di kasir" : "Masih disiapkan kasir"}
+                    {order.status === "siap" ? "Sudah bisa diambil di warung" : "Masih diproses admin"}
                   </p>
                   <p className="tabular mt-0.5 text-lg font-extrabold text-brand">
                     Rp {rupiah(order.total_price)}

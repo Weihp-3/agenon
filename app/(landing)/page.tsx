@@ -4,11 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Icon } from "@/components/icon";
+import { ProductPreview } from "@/components/landing/product-preview";
 
 const steps = [
   { title: "Pilih produk", desc: "Buka katalog, lihat harga dan stok yang tersedia." },
   { title: "Bayar sesukamu", desc: "Tunai, QRIS, transfer, atau pakai saldo." },
-  { title: "Ambil di kasir", desc: "Tunjukkan kode 6 huruf, pesanan siap." },
+  { title: "Ambil di warung", desc: "Tunjukkan kode 6 huruf, pesanan siap." },
 ];
 
 const features = [
@@ -41,8 +42,8 @@ export default function LandingPage() {
             <Link href="/#cara-belanja" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
               Cara belanja
             </Link>
-            <Link href="/#kasir-admin" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
-              Kasir & Admin
+            <Link href="/#tentang" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+              Tentang
             </Link>
             <Link href="/#faq" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
               FAQ
@@ -149,8 +150,11 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* Untuk kasir & admin */}
-      <section id="kasir-admin" className="scroll-mt-20 bg-surface px-4 py-16 md:py-24">
+      {/* Produk populer */}
+      <ProductPreview />
+
+      {/* Tentang warung */}
+      <section id="tentang" className="scroll-mt-20 bg-surface px-4 py-16 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -170,10 +174,10 @@ export default function LandingPage() {
 
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">
-              Dibangun untuk kasir & admin
+              Dibangun untuk warung
             </h2>
             <p className="mt-4 max-w-md text-lg text-ink-muted">
-              Alat harian warung: kasir cepat, stok, shift, dan laporan dalam satu tempat.
+              Alat harian warung: kelola produk, stok, laporan, dan verifikasi bayar dalam satu tempat.
             </p>
 
             <ul className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
@@ -248,7 +252,7 @@ export default function LandingPage() {
                 <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                Setelah pembayaran dicek kasir, kamu dapat notifikasi. Tunjukkan kode ambil di kasir untuk mengambil belanjaan.
+                Setelah pembayaran dicek admin, kamu dapat notifikasi. Tunjukkan kode ambil di warung untuk mengambil belanjaan.
               </p>
             </details>
             <details className="group border-b border-ink/10 py-4">
@@ -257,7 +261,7 @@ export default function LandingPage() {
                 <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
               </summary>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                07.00–21.00 WIB setiap hari. Jl. Raya Serpong No. 42, Tangerang.
+                07.00–21.00 WIB setiap hari. Jl. Iskandar Muda Gg. Utama 1, RT.004/RW.004, Neglasari, Kec. Neglasari, Kota Tangerang, Banten 15129.
               </p>
             </details>
           </div>
@@ -292,7 +296,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-ink/10 bg-surface-sunken px-4 py-10 md:py-14">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
               <Link href="/" className="mb-4 flex items-center gap-2.5">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand text-brand-on">
@@ -304,7 +308,7 @@ export default function LandingPage() {
                 Warung kelontong di Tangerang. Pesan lewat HP, bayar fleksibel, ambil dengan kode.
               </p>
               <dl className="mt-6 grid gap-2 text-sm text-ink-muted">
-                <div className="flex gap-2"><dt className="w-20 font-semibold">Alamat</dt><dd>Jl. Raya Serpong No. 42, Tangerang</dd></div>
+                <div className="flex gap-2"><dt className="w-20 font-semibold">Alamat</dt><dd>Jl. Iskandar Muda Gg. Utama 1, RT.004/RW.004, Neglasari, Kec. Neglasari, Kota Tangerang, Banten 15129</dd></div>
                 <div className="flex gap-2"><dt className="w-20 font-semibold">Buka</dt><dd>07.00–21:00 WIB (Setiap hari)</dd></div>
                 <div className="flex gap-2"><dt className="w-20 font-semibold">Bayar</dt><dd>Tunai, QRIS, transfer, saldo</dd></div>
               </dl>
@@ -315,13 +319,6 @@ export default function LandingPage() {
                 <li><Link href="/pembelian" className="hover:text-brand">Belanja produk</Link></li>
                 <li><Link href="/pesanan" className="hover:text-brand">Pesanan saya</Link></li>
                 <li><Link href="/riwayat" className="hover:text-brand">Riwayat belanja</Link></li>
-              </ul>
-            </nav>
-            <nav>
-              <h4 className="mb-3 font-semibold text-ink">Kasir & Admin</h4>
-              <ul className="space-y-2 text-sm text-ink-muted">
-                <li><Link href="/login" className="hover:text-brand">Masuk kasir</Link></li>
-                <li><Link href="/login" className="hover:text-brand">Masuk admin</Link></li>
               </ul>
             </nav>
           </div>

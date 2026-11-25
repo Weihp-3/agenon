@@ -6,7 +6,7 @@ import { requireRole } from "./auth";
 
 /** Verify a payment: mark the transaction as selesai. */
 export async function verifyAction(id: string): Promise<void> {
-  await requireRole("admin", "kasir");
+  await requireRole("admin");
   const txId = BigInt(id);
 
   const transaction = await db.transactions.findUnique({ where: { id: txId } });
@@ -24,7 +24,7 @@ export async function verifyAction(id: string): Promise<void> {
 
 /** Reject a payment: restore stock once and mark the transaction batal. */
 export async function rejectAction(id: string): Promise<void> {
-  await requireRole("admin", "kasir");
+  await requireRole("admin");
   const txId = BigInt(id);
 
   const transaction = await db.transactions.findUnique({
