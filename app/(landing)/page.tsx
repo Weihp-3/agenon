@@ -44,6 +44,9 @@ export default function LandingPage() {
             <Link href="/#kasir-admin" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
               Kasir & Admin
             </Link>
+            <Link href="/#faq" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+              FAQ
+            </Link>
             <Link href="/login" className="btn btn-brand btn-sm ml-1">
               Masuk
             </Link>
@@ -193,6 +196,70 @@ export default function LandingPage() {
                 </motion.li>
               ))}
             </ul>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="scroll-mt-20 bg-surface-sunken px-4 py-16 md:py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto max-w-3xl"
+        >
+          <h2 className="text-3xl font-extrabold tracking-tight text-ink md:text-4xl">
+            Pertanyaan yang sering ditanya
+          </h2>
+          <p className="mt-3 text-lg text-ink-muted">Singkat dan to-the-point, seperti di warung.</p>
+
+          <div className="mt-8 border-t border-ink/10">
+            <details className="group border-b border-ink/10 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                Bagaimana cara memesan?
+                <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                Buka katalog, pilih produk, atur jumlah, lalu tekan Pesan Sekarang. Kamu akan mendapat kode ambil 6 huruf.
+              </p>
+            </details>
+            <details className="group border-b border-ink/10 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                Metode pembayaran apa saja?
+                <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                Tunai, QRIS, transfer, dan saldo. Gak punya cash atau saldo? Tenang, bisa bayar di tempat saat ambil pesanan.
+              </p>
+            </details>
+            <details className="group border-b border-ink/10 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                Harus punya akun untuk memesan?
+                <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                Lihat produk boleh tanpa akun. Saat mau memesan, kamu akan diarahkan ke halaman masuk. Daftar bisa pakai email atau akun Google.
+              </p>
+            </details>
+            <details className="group border-b border-ink/10 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                Kapan pesanan siap diambil?
+                <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                Setelah pembayaran dicek kasir, kamu dapat notifikasi. Tunjukkan kode ambil di kasir untuk mengambil belanjaan.
+              </p>
+            </details>
+            <details className="group border-b border-ink/10 py-4">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-ink">
+                Jam buka dan alamatnya?
+                <Icon name="chevronDown" className="h-5 w-5 shrink-0 text-ink-muted transition-transform group-open:rotate-180" />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                07.00–21.00 WIB setiap hari. Jl. Raya Serpong No. 42, Tangerang.
+              </p>
+            </details>
           </div>
         </motion.div>
       </section>
