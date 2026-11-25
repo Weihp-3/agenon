@@ -57,10 +57,10 @@ Warung sebelah juga punya struk. Tapi struk *Warung Mama Zaviyar* punya **kode a
 ## Sections for Landing Page (claim → proof)
 1. **Hero** — "Pesan lewat HP, ambil di warung. Buka 07:00–21:00." → Foto interior + live calculator
 2. **Cara pakai** — 3 langkah real: Pilih → Bayar → Ambil (dengan kode)
-3. **Produk populer** — 4 item asli dari DB → gambar + harga + stok (fetch dari `/api/products/preview`)
+3. **Produk** — tombol navbar/CTA mengarah ke `/produk` (katalog produk, bukan preview di landing)
 4. **Tentang warung** — Ringkasan fitur: laporan, stok, verifikasi bayar → screenshot dashboard
 5. **FAQ** — Pertanyaan yang sering ditanya
-6. **Footer** — Nama warung, jam, alamat, link login/daftar, customer service
+6. **Footer** — Nama warung, jam, alamat, link login/daftar, customer service, link akun sosial (Instagram, Facebook, GitHub)
 
 ## App Screen principles (dashboard, user, admin)
 - **Quiet borders**, small labels, repeated panels — no gradients, no glows, no icon cards

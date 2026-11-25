@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { Icon } from "@/components/icon";
-import { ProductPreview } from "@/components/landing/product-preview";
 
 const steps = [
   { title: "Pilih produk", desc: "Buka katalog, lihat harga dan stok yang tersedia." },
@@ -36,7 +35,7 @@ export default function LandingPage() {
           </Link>
 
           <nav aria-label="Navigasi utama" className="flex flex-wrap items-center gap-1">
-            <Link href="/pembelian" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
+            <Link href="/produk" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
               Produk
             </Link>
             <Link href="/#cara-belanja" className="rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink">
@@ -72,7 +71,7 @@ export default function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link href="/pembelian" className="btn btn-brand px-6 py-3 text-base">
+              <Link href="/produk" className="btn btn-brand px-6 py-3 text-base">
                 <Icon name="cart" className="h-5 w-5" />
                 Lihat produk
               </Link>
@@ -149,9 +148,6 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </section>
-
-      {/* Produk populer */}
-      <ProductPreview />
 
       {/* Tentang warung */}
       <section id="tentang" className="scroll-mt-20 bg-surface px-4 py-16 md:py-24">
@@ -284,7 +280,7 @@ export default function LandingPage() {
             Buka katalog, pilih produk, dan ambil di warung.
           </p>
           <Link
-            href="/pembelian"
+            href="/produk"
             className="mt-8 inline-flex items-center justify-center rounded-md bg-brand-on px-8 py-3 text-base font-bold text-brand transition-transform active:scale-[0.98]"
           >
             <Icon name="cart" className="mr-2 h-5 w-5" />
@@ -296,7 +292,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-ink/10 bg-surface-sunken px-4 py-10 md:py-14">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
               <Link href="/" className="mb-4 flex items-center gap-2.5">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand text-brand-on">
@@ -316,9 +312,55 @@ export default function LandingPage() {
             <nav>
               <h4 className="mb-3 font-semibold text-ink">Pelanggan</h4>
               <ul className="space-y-2 text-sm text-ink-muted">
-                <li><Link href="/pembelian" className="hover:text-brand">Belanja produk</Link></li>
+                <li><Link href="/produk" className="hover:text-brand">Belanja produk</Link></li>
                 <li><Link href="/pesanan" className="hover:text-brand">Pesanan saya</Link></li>
                 <li><Link href="/riwayat" className="hover:text-brand">Riwayat belanja</Link></li>
+              </ul>
+            </nav>
+            <nav>
+              <h4 className="mb-3 font-semibold text-ink">Ikuti kami</h4>
+              <ul className="flex gap-2">
+                <li>
+                  <a
+                    href="https://instagram.com/weihpp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-ink/10 text-ink-muted transition-colors hover:border-brand hover:text-brand"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.7} aria-hidden="true">
+                      <rect x="3" y="3" width="18" height="18" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                    </svg>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://facebook.com/share/1GvGdnTu2K/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-ink/10 text-ink-muted transition-colors hover:border-brand hover:text-brand"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                      <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H17V3.6c-.3-.04-1.3-.13-2.45-.13-2.43 0-4.1 1.48-4.1 4.2V9.9H7.8V13h2.65v8h3.05Z" />
+                    </svg>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/Weihp-3"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub"
+                    className="flex h-9 w-9 items-center justify-center rounded-md border border-ink/10 text-ink-muted transition-colors hover:border-brand hover:text-brand"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                      <path d="M12 .3a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .3Z" />
+                    </svg>
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>
