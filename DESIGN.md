@@ -12,16 +12,16 @@
 - **Voice**: Bahasa Indonesia santai tapi rapi. "Kamu" bukan "Anda". "Belanja" bukan "Transaksi".
 - **Energy**: Tenang tapi hidup. Ada ritme harian: buka pagi, ramai istirahat, tutup malam.
 
-## Palette (mint — DEF5E5, BCEAD5, 9ED5C5, 8EC3B0)
-- **Ground (surface)**: `#DEF5E5` (light) / `#07120f` (dark) — kertas/lemari warung
-- **Ground raised (surface-raised)**: `#ffffff` / `#0c1c17` — kartu struk, panel kasir
-- **Ground sunken (surface-sunken)**: `#BCEAD5` / `#040c0a` — area input, keranjang
-- **Ink (ink)**: `#11221c` / `#e2f0ea` — tulisan di struk, label harga
-- **Ink muted (ink-muted)**: `#3a5047` / `#94aaa0` — keterangan kecil, stok habis
-- **Ink subtle (ink-subtle)**: `#6a8076` / `#718876` — placeholder, border halus
-- **Brand (brand)**: `#8EC3B0` (light & dark) — mint daun — **accent tunggal**; teks di atasnya selalu hijau tua (`brand-on`), bukan putih
-- **Brand hover**: `#9ED5C5`
-- **Brand soft (brand-soft)**: `#BCEAD5` / `#152e26` — latar badge "siap ambil"; teks `#173f33` / `#BCEAD5`
+## Palette (from existing globals.css — keep, refine roles)
+- **Ground (surface)**: `#f6f8fc` (light) / `#080e1a` (dark) — kertas/lemari warung
+- **Ground raised (surface-raised)**: `#ffffff` / `#10192a` — kartu struk, panel kasir
+- **Ground sunken (surface-sunken)**: `#eee2f9` / `#050a13` — area input, keranjang
+- **Ink (ink)**: `#0f172a` / `#e2e8f0` — tulisan di struk, label harga
+- **Ink muted (ink-muted)**: `#475569` / `#94a3b8` — keterangan kecil, stok habis
+- **Ink subtle (ink-subtle)**: `#74849a` / `#718094` — placeholder, border halus
+- **Brand (brand)**: `#2563eb` / `#60a5fa` — biru tusuk sate / kemasan minuman — **accent tunggal**
+- **Brand hover**: `#1d4ed8` / `#93c5fd`
+- **Brand soft (brand-soft)**: `#eff6ff` / `#162644` — latar badge "siap ambil"
 - **Status OK**: `#16804a` / `#4ade80` — stok aman, pesanan selesai
 - **Status Warn**: `#b45309` / `#fbbf24` — stok menipis, menunggu
 - **Status Danger**: `#be2a2a` / `#f87171` — stok habis, batal

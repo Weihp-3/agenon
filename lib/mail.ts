@@ -55,7 +55,7 @@ export async function sendPasswordResetEmail(args: {
         <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun Warung Mama Zaviyar kamu.</p>
         <p>
           <a href="${escapeHtml(args.resetUrl)}"
-             style="display:inline-block;background:#8EC3B0;color:#142C25;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:bold">
+             style="display:inline-block;background:#2563eb;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:bold">
             Buat kata sandi baru
           </a>
         </p>

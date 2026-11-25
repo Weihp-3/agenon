@@ -2,27 +2,30 @@
 
 import { randomUUID } from "crypto";
 import { redirect } from "next/navigation";
+import { del, put } from "@vercel/blob";
 import { db } from "./db";
-import fs from "fs/promises";
-import path from "path";
 import { requireRole } from "./auth";
-import type { Prisma } from "@prisma/client";
-
-const PUBLIC_DIR = path.resolve("public");
-const PRODUCTS_STORAGE_DIR = path.join(PUBLIC_DIR, "storage", "products");
-const DEFAULT_IMAGE = "/images/default.png";
-
-async function ensureStorageDir() {
-  await fs.mkdir(PRODUCTS_STORAGE_DIR, { recursive: true });
-}
 
 function getExt(filename: string): string {
   const dot = filename.lastIndexOf(".");
   return dot >= 0 ? filename.slice(dot) : "";
 }
 
-function dbImagePath(file: string): string {
-  return `/storage/${file}`;
+async function storeImage(image: File): Promise<string> {
+  const blob = await put(`${randomUUID()}${getExt(image.name)}`, image, {
+    access: "public",
+    contentType: image.type,
+  });
+  return blob.url;
+}
+
+async function removeImage(url: string | null | undefined) {
+  if (!url || !url.startsWith("https://") || !url.includes("blob.vercel-storage.com")) return;
+  try {
+    await del(url);
+  } catch (error) {
+    console.error("Gagal menghapus gambar lama", error);
+  }
 }
 
 export async function storeProduct(formData: FormData) {
@@ -33,27 +36,23 @@ export async function storeProduct(formData: FormData) {
   const category = String(formData.get("category") ?? "").trim() || undefined;
   const image = formData.get("image") as File | null;
 
-  // Validation: name required
   if (!name) {
     return { success: false, error: "Nama produk wajib diisi." };
   }
 
-  // Validation: price numeric required
   const priceNum = Number(price);
   if (!Number.isFinite(priceNum) || priceNum < 0) {
     return { success: false, error: "Harga wajib berupa angka." };
   }
 
-  // Validation: stock numeric required
   const stockNum = Number(stock);
   if (!Number.isFinite(stockNum) || stockNum < 0) {
     return { success: false, error: "Stok wajib berupa angka." };
   }
 
-  let imagePath: string | null = null;
+  let imageUrl: string | null = null;
 
   if (image && image.size > 0) {
-    const ext = getExt(image.name);
     const allowedMimes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedMimes.includes(image.type)) {
       return { success: false, error: "Format gambar wajib JPG, PNG, atau WEBP." };
@@ -61,28 +60,18 @@ export async function storeProduct(formData: FormData) {
     if (image.size > 2048 * 1024) {
       return { success: false, error: "Ukuran gambar maksimal 2MB." };
     }
-
-    await ensureStorageDir();
-    const fileName = `${randomUUID()}${ext}`;
-    const filePath = path.join(PRODUCTS_STORAGE_DIR, fileName);
-
-    const buffer = Buffer.from(await image.arrayBuffer());
-    await fs.writeFile(filePath, buffer);
-    imagePath = dbImagePath(fileName);
+    imageUrl = await storeImage(image);
   }
 
-  const data: Prisma.productsCreateInput = {
-    name,
-    price: priceNum,
-    stock: stockNum,
-    category,
-  };
-
-  if (imagePath) {
-    data.image = imagePath;
-  }
-
-  await db.products.create({ data });
+  await db.products.create({
+    data: {
+      name,
+      price: priceNum,
+      stock: stockNum,
+      category,
+      ...(imageUrl ? { image: imageUrl } : {}),
+    },
+  });
 
   return {
     success: true,
@@ -98,7 +87,6 @@ export async function updateProduct(id: string, formData: FormData) {
   const category = String(formData.get("category") ?? "").trim() || undefined;
   const image = formData.get("image") as File | null;
 
-  // Validation
   if (!name) {
     return { success: false, error: "Nama produk wajib diisi." };
   }
@@ -118,18 +106,9 @@ export async function updateProduct(id: string, formData: FormData) {
     return { success: false, error: "Produk tidak ditemukan." };
   }
 
-  let imagePath = product.image ?? null;
+  let imageUrl = product.image;
 
   if (image && image.size > 0) {
-    // Delete old image if exists
-    if (product.image) {
-      try {
-        const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
-        await fs.unlink(oldPath).catch(() => {});
-      } catch {}
-    }
-
-    const ext = getExt(image.name);
     const allowedMimes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedMimes.includes(image.type)) {
       return { success: false, error: "Format gambar wajib JPG, PNG, atau WEBP." };
@@ -137,37 +116,19 @@ export async function updateProduct(id: string, formData: FormData) {
     if (image.size > 2048 * 1024) {
       return { success: false, error: "Ukuran gambar maksimal 2MB." };
     }
-
-    await ensureStorageDir();
-    const fileName = `${randomUUID()}${ext}`;
-    const filePath = path.join(PRODUCTS_STORAGE_DIR, fileName);
-
-    const buffer = Buffer.from(await image.arrayBuffer());
-    await fs.writeFile(filePath, buffer);
-    imagePath = dbImagePath(fileName);
-  }
-
-  const data: Prisma.productsUpdateInput = {
-    name,
-    price: priceNum,
-    stock: stockNum,
-    category,
-  };
-
-  if (imagePath !== undefined && imagePath !== null) {
-    data.image = imagePath;
-  } else if (imagePath === null && product.image) {
-    // User cleared the image - delete old one
-    try {
-      const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
-      await fs.unlink(oldPath).catch(() => {});
-    } catch {}
-    data.image = null;
+    imageUrl = await storeImage(image);
+    await removeImage(product.image);
   }
 
   await db.products.update({
     where: { id: Number(id) },
-    data,
+    data: {
+      name,
+      price: priceNum,
+      stock: stockNum,
+      category,
+      image: imageUrl,
+    },
   });
 
   return {
@@ -183,15 +144,8 @@ export async function destroyProduct(id: string): Promise<void> {
     redirect("/products?flash=error&msg=Produk+tidak+ditemukan.");
   }
 
-  // Delete image file if exists
-  if (product.image) {
-    try {
-      const oldPath = path.join(PUBLIC_DIR, product.image.replace("/storage/", ""));
-      await fs.unlink(oldPath).catch(() => {});
-    } catch {}
-  }
-
   await db.products.delete({ where: { id: BigInt(id) } });
+  await removeImage(product.image);
 
   redirect("/products?flash=success&msg=Produk+berhasil+dihapus.");
 }
